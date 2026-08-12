@@ -1,0 +1,61 @@
+import { DoorOpen, FileText, Heart, Home, MapPin, MessageCircle, Navigation, Wifi, X } from "lucide-react";
+
+import type { Page, Translation } from "../types";
+
+export function MobileMenu({
+  navigate,
+  close,
+  t,
+}: {
+  navigate: (page: Page) => void;
+  close: () => void;
+  t: Translation;
+}) {
+  const items: {
+    page: Page;
+    title: string;
+    icon: React.ReactNode;
+  }[] = [
+    { page: "home", title: t.home, icon: <Home /> },
+    { page: "getting-here", title: t.gettingHere, icon: <Navigation /> },
+    { page: "guide", title: t.houseGuide, icon: <FileText /> },
+    { page: "rules", title: t.houseRules, icon: <Heart /> },
+    { page: "wifi", title: t.wifi, icon: <Wifi /> },
+    { page: "nearby", title: t.exploreNearby, icon: <MapPin /> },
+    { page: "checkout", title: t.checkout, icon: <DoorOpen /> },
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm">
+      <div className="absolute bottom-0 left-0 right-0 rounded-t-[2rem] bg-[#f7f7f2] p-6">
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="text-xl font-bold">{t.guestGuide}</h2>
+          <button onClick={close} className="flex h-10 w-10 items-center justify-center rounded-lg bg-white">
+            <X size={19} />
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          {items.map((item) => (
+            <button
+              key={item.page}
+              onClick={() => navigate(item.page)}
+              className="flex items-center gap-3 rounded-lg bg-white p-4 text-left"
+            >
+              <span className="text-[#ff385c]">{item.icon}</span>
+              <span className="text-sm font-semibold">{item.title}</span>
+            </button>
+          ))}
+        </div>
+
+        <button
+          onClick={() => alert("Opening WhatsApp...")}
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[#ff385c] py-4 font-semibold text-white"
+        >
+          <MessageCircle size={18} />
+          {t.contactHost}
+        </button>
+      </div>
+    </div>
+  );
+}
