@@ -1,5 +1,6 @@
 import { FileText, Home, MapPin, MessageCircle } from "lucide-react";
 
+import { hostWhatsappUrl } from "../data/contact";
 import type { Page, Translation } from "../types";
 
 export function BottomNavigation({
@@ -17,12 +18,7 @@ export function BottomNavigation({
         <BottomItem active={page === "home"} icon={<Home />} label={t.home} onClick={() => navigate("home")} />
         <BottomItem active={page === "guide"} icon={<FileText />} label={t.guide} onClick={() => navigate("guide")} />
         <BottomItem active={page === "nearby"} icon={<MapPin />} label={t.explore} onClick={() => navigate("nearby")} />
-        <BottomItem
-          active={false}
-          icon={<MessageCircle />}
-          label={t.contact}
-          onClick={() => alert("Opening WhatsApp...")}
-        />
+        <BottomItem active={false} href={hostWhatsappUrl} icon={<MessageCircle />} label={t.contact} />
       </div>
     </nav>
   );
@@ -33,19 +29,29 @@ function BottomItem({
   label,
   active,
   onClick,
+  href,
 }: {
   icon: React.ReactNode;
   label: string;
   active: boolean;
-  onClick: () => void;
+  onClick?: () => void;
+  href?: string;
 }) {
+  const className = `flex flex-col items-center gap-1 rounded-xl py-2 text-[10px] font-medium transition ${
+    active ? "text-[#ff385c]" : "text-gray-500"
+  }`;
+
+  if (href) {
+    return (
+      <a href={href} target="_blank" rel="noreferrer" className={className}>
+        <div>{icon}</div>
+        <span>{label}</span>
+      </a>
+    );
+  }
+
   return (
-    <button
-      onClick={onClick}
-      className={`flex flex-col items-center gap-1 rounded-xl py-2 text-[10px] font-medium transition ${
-        active ? "text-[#ff385c]" : "text-gray-500"
-      }`}
-    >
+    <button onClick={onClick} className={className}>
       <div>{icon}</div>
       <span>{label}</span>
     </button>

@@ -1,5 +1,6 @@
 import { DoorOpen, FileText, Heart, Home, MapPin, MessageCircle, Navigation, Wifi, X } from "lucide-react";
 
+import { hostWhatsappUrl } from "../data/contact";
 import type { Page, Translation } from "../types";
 
 export function MobileMenu({
@@ -48,13 +49,15 @@ export function MobileMenu({
           ))}
         </div>
 
-        <button
-          onClick={() => alert("Opening WhatsApp...")}
+        <a
+          href={hostWhatsappUrl}
+          target="_blank"
+          rel="noreferrer"
           className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-[#ff385c] py-4 font-semibold text-white"
         >
           <MessageCircle size={18} />
           {t.contactHost}
-        </button>
+        </a>
       </div>
     </div>
   );

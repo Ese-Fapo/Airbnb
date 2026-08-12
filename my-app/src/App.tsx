@@ -64,8 +64,8 @@ const translations: Record<Language, Record<string, string>> = {
       "Start with the arrival details, then use the guide for house rules, WiFi, and nearby suggestions.",
     property: "Property",
     address: "Address",
-    fromAirport: "From Palm Beach International Airport:",
-    directionStep1: "Head west on Airport Blvd",
+    fromAirport: "From Roderveria take a bus",
+    directionStep1: "Head west on Airpot Blvd",
     directionStep2: "Merge onto I-95 South",
     directionStep3: "Take exit 75 toward Palm Beach",
     directionStep4: "Turn right onto Willow Lane",
@@ -506,25 +506,7 @@ function HomePage({
 
           {/* TOP */}
 
-          <div className="flex items-center justify-between">
-
-            <button
-              className="
-                flex
-                h-11
-                w-11
-                items-center
-                justify-center
-                rounded-lg
-                border border-white/20
-                bg-white/10
-                text-white
-                shadow-lg
-                backdrop-blur-md
-              "
-            >
-              <Menu size={21} />
-            </button>
+          <div className="flex items-center justify-end">
 
             <LanguageSwitcher
               language={language}
