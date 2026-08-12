@@ -1,22 +1,11 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "builds": [
+  "installCommand": "cd my-app && npm install",
+  "buildCommand": "cd my-app && npm run build",
+  "outputDirectory": "my-app/dist",
+  "rewrites": [
     {
-      "src": "my-app/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist"
-      }
-    }
-  ],
-  "routes": [
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
