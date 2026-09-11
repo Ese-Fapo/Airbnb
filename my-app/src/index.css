@@ -20,6 +20,7 @@ body {
     #f7f7f2;
 }
 button { font: inherit; }
-img { display: block; }
+img { display: block; max-width: 100%; }
+p, h1, h2, h3, span, li, a, button { overflow-wrap: anywhere; }
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-thumb { background: #ff8aa0; border-radius: 20px; }
