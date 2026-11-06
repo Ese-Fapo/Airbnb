@@ -53,7 +53,7 @@ export function DirectionPage({ language, setLanguage, t, navigate }: PageProps)
 
   return (
     <PageLayout title={t.gettingHere} language={language} setLanguage={setLanguage} t={t} navigate={navigate}>
-      <img src={images.exterior} alt={t.property} className="h-[11.875rem] w-full rounded-lg object-cover sm:h-[205px]" />
+      <img src={images.hero} alt={t.property} className="h-[11.875rem] w-full rounded-lg object-cover sm:h-[205px]" />
 
       <Card>
         <div className="flex min-w-0 gap-3 sm:gap-4">
@@ -131,17 +131,29 @@ export function DirectionPage({ language, setLanguage, t, navigate }: PageProps)
         </button>
       </div>
 
-      <div className="relative h-[11.875rem] overflow-hidden rounded-lg bg-[#dfe8e6]">
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute left-[20%] top-0 h-full w-3 rotate-25 bg-white" />
-          <div className="absolute left-[55%] top-0 h-full w-4 -rotate-35 bg-white" />
-          <div className="absolute top-[40%] h-3 w-full rotate-5 bg-white" />
+      <section className="space-y-3">
+        <div>
+          <h2 className="text-lg font-bold">
+            {language === "pt" ? "Reconheça a entrada pelas fotos" : language === "es" ? "Reconoce la entrada en las fotos" : "Recognize the entrance in photos"}
+          </h2>
+          <p className="mt-1 text-sm leading-5 text-[#5f6b65]">
+            {language === "pt" ? "Estas imagens mostram a fachada, a passagem e a entrada privativa da hospedagem." : language === "es" ? "Estas imágenes muestran la fachada, el pasaje y la entrada privada." : "These photos show the street frontage, passage and private apartment entrance."}
+          </p>
         </div>
-        <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center">
-          <MapPin size={40} fill="#ff385c" className="text-[#ff385c]" />
-          <span className="rounded-lg bg-white px-3 py-1 text-xs font-semibold shadow">{t.yourHome}</span>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            { src: images.hero, en: "Street frontage", pt: "Fachada", es: "Fachada" },
+            { src: images.passage, en: "Passage", pt: "Passagem", es: "Pasaje" },
+            { src: images.passageSide, en: "Side passage", pt: "Passagem lateral", es: "Pasaje lateral" },
+            { src: images.entrance, en: "Private entrance", pt: "Entrada privativa", es: "Entrada privada" },
+          ].map((view) => (
+            <figure key={view.src} className="overflow-hidden rounded-lg border border-[#e5e7df] bg-white shadow-sm">
+              <img src={view.src} alt={view[language]} loading="lazy" className="h-36 w-full object-cover sm:h-40" />
+              <figcaption className="p-3 text-xs font-semibold">{view[language]}</figcaption>
+            </figure>
+          ))}
         </div>
-      </div>
+      </section>
     </PageLayout>
   );
 }

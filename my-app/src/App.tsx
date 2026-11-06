@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Car,
   Check,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   Copy,
   DoorOpen,
   FileText,
@@ -19,6 +21,7 @@ import {
   ShieldAlert,
   Sparkles,
   Wifi,
+  X,
 } from "lucide-react";
 
 import { BottomNavigation } from "./components/BottomNavigation";
@@ -26,7 +29,7 @@ import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { MobileMenu } from "./components/MobileMenu";
 import { PageLayout } from "./components/PageLayout";
 import { Card, GuideRow, PropertyCard, QuickAction } from "./components/ui";
-import { images } from "./data/images";
+import { images, propertyPhotos } from "./data/images";
 import { CheckoutPage } from "./pages/checkout/CheckoutPage";
 import { ContactButton } from "./pages/contact/ContactButton";
 import { DirectionPage } from "./pages/direction/DirectionPage";
@@ -67,10 +70,10 @@ const translations: Record<Language, Record<string, string>> = {
       "Start with the arrival details, then use the guide for house rules, WiFi, and nearby suggestions.",
     property: "Property",
     address: "Address",
-    fromAirport: "From Roderveria take a bus (Barrio Ipiranga) to the Real Parque neighborhood, then walk to the house",
-    directionStep1: "Call an uber or taxi to the house (best option)",
-    directionStep2: "Use your GPS to navigate to the house",
-    directionStep3: "call the host if you have any trouble finding the house",
+    fromAirport: "Use the address below for your route to Real Parque, São José:",
+    directionStep1: "Open the address in Maps to see the current route.",
+    directionStep2: "A taxi or ride-hailing car can take you directly to the property.",
+    directionStep3: "Contact the host if you need help finding the entrance.",
    
     openMaps: "Open in Maps",
     callHost: "Call Host",
@@ -166,12 +169,10 @@ const translations: Record<Language, Record<string, string>> = {
       "Comece pelos detalhes de chegada e use o guia para regras da casa, WiFi e sugestões próximas.",
     property: "Propriedade",
     address: "Endereço",
-    fromAirport: "A partir do Aeroporto Internacional de Palm Beach:",
-    directionStep1: "Siga para oeste pela Airport Blvd",
-    directionStep2: "Entre na I-95 South",
-    directionStep3: "Pegue a saída 75 em direção a Palm Beach",
-    directionStep4: "Vire à direita na Willow Lane",
-    directionStep5: "Siga pela entrada até o acesso privativo",
+    fromAirport: "Use o endereço abaixo para traçar a rota até o Real Parque, em São José:",
+    directionStep1: "Abra o endereço no Maps para ver a rota atual.",
+    directionStep2: "Um táxi ou carro de aplicativo pode levar você diretamente à propriedade.",
+    directionStep3: "Fale com o anfitrião se precisar de ajuda para encontrar a entrada.",
     openMaps: "Abrir no Maps",
     callHost: "Ligar para anfitrião",
     yourHome: "Sua Casa",
@@ -266,12 +267,10 @@ const translations: Record<Language, Record<string, string>> = {
       "Empieza con los detalles de llegada y usa la guía para reglas de la casa, WiFi y sugerencias cercanas.",
     property: "Propiedad",
     address: "Dirección",
-    fromAirport: "Desde el Aeropuerto Internacional de Palm Beach:",
-    directionStep1: "Dirígete al oeste por Airport Blvd",
-    directionStep2: "Incorpórate a I-95 South",
-    directionStep3: "Toma la salida 75 hacia Palm Beach",
-    directionStep4: "Gira a la derecha en Willow Lane",
-    directionStep5: "Sigue la entrada hasta el acceso privado",
+    fromAirport: "Usa la dirección de abajo para llegar a Real Parque, São José:",
+    directionStep1: "Abre la dirección en Maps para consultar la ruta actual.",
+    directionStep2: "Un taxi o coche de aplicación puede llevarte directamente a la propiedad.",
+    directionStep3: "Contacta al anfitrión si necesitas ayuda para encontrar la entrada.",
     openMaps: "Abrir en Maps",
     callHost: "Llamar anfitrión",
     yourHome: "Tu Casa",
@@ -527,7 +526,7 @@ function HomePage({
 
         <img
           src={images.hero}
-          alt="Beautiful  room"
+          alt={language === "pt" ? "Fachada do imóvel no Real Parque" : language === "es" ? "Fachada de la propiedad en Real Parque" : "Street view of the Real Parque property"}
           className="absolute inset-0 h-full w-full scale-105 object-cover"
         />
 
@@ -700,6 +699,56 @@ function HomePage({
 
         </div>
 
+        <div className="mt-5">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-base font-bold">{language === "pt" ? "Mais espaços da casa" : language === "es" ? "Más espacios de la casa" : "More of the home"}</h3>
+            <button onClick={() => navigate("photos")} className="text-xs font-semibold text-[#ff385c]">{photoActionLabel}</button>
+          </div>
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
+            {[
+              { src: images.kitchen, label: language === "pt" ? "Cozinha" : language === "es" ? "Cocina" : "Kitchen" },
+              { src: images.bathroom, label: language === "pt" ? "Banheiro" : language === "es" ? "Baño" : "Bathroom" },
+              { src: images.exterior, label: language === "pt" ? "Área externa" : language === "es" ? "Zona exterior" : "Outdoor area" },
+            ].map((space) => (
+              <button key={space.src} onClick={() => navigate("photos")} className="overflow-hidden rounded-lg border border-[#e5e7df] bg-white text-left shadow-sm">
+                <img src={space.src} alt={space.label} loading="lazy" className="h-24 w-full object-cover sm:h-36" />
+                <span className="block px-2 py-3 text-xs font-semibold sm:px-3">{space.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-5">
+          <h3 className="mb-3 text-base font-bold">
+            {language === "pt" ? "O que esperar da estadia" : language === "es" ? "Qué esperar de la estancia" : "What to expect"}
+          </h3>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {[
+              {
+                title: language === "pt" ? "Acesso aos quartos" : language === "es" ? "Acceso a dormitorios" : "Bedroom access",
+                detail: language === "pt" ? "1–2 hóspedes: um quarto. 3–4 hóspedes: dois quartos." : language === "es" ? "1–2 huéspedes: un dormitorio. 3–4 huéspedes: dos dormitorios." : "1–2 guests: one bedroom. 3–4 guests: two bedrooms.",
+              },
+              {
+                title: language === "pt" ? "Toalhas e itens pessoais" : language === "es" ? "Toallas y artículos personales" : "Towels & personal items",
+                detail: language === "pt" ? "Traga toalhas e produtos de higiene. Toalhas podem ser solicitadas antes." : language === "es" ? "Trae toallas y artículos de higiene. Puedes pedir toallas con anticipación." : "Bring towels and toiletries. Towels may be requested in advance.",
+              },
+              {
+                title: language === "pt" ? "Estacionamento" : language === "es" ? "Estacionamiento" : "Parking",
+                detail: language === "pt" ? "Não há vaga dentro da propriedade; use vagas permitidas na rua." : language === "es" ? "No hay plaza dentro de la propiedad; usa espacios permitidos en la calle." : "There is no on-site guest space; use permitted street parking.",
+              },
+              {
+                title: language === "pt" ? "Horário de silêncio" : language === "es" ? "Horario de silencio" : "Quiet hours",
+                detail: language === "pt" ? "Das 22h às 8h. Sem festas." : language === "es" ? "De 10 PM a 8 AM. No se permiten fiestas." : "10 PM to 8 AM. No parties.",
+              },
+            ].map((note) => (
+              <div key={note.title} className="rounded-lg border border-[#e5e7df] bg-white p-4 shadow-sm">
+                <h4 className="text-sm font-semibold">{note.title}</h4>
+                <p className="mt-1 text-xs leading-5 text-[#5f6b65]">{note.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div className="mt-4 rounded-lg border border-[#dfe4dd] bg-[#ecf3f2] p-5 md:p-6">
 
           <Leaf
@@ -729,34 +778,28 @@ function PhotoGalleryPage({
   t,
   navigate,
 }: PageProps) {
-  const photoLabels = {
-    en: {
-      title: "Photo gallery",
-      subtitle: "A closer look at the apartment",
-      featured: "Featured space",
-      tap: "Photos use the current listing images and can be replaced with updated room photos anytime.",
-    },
-    pt: {
-      title: "Galeria de fotos",
-      subtitle: "Uma visao mais proxima do apartamento",
-      featured: "Espaco principal",
-      tap: "As fotos usam as imagens atuais do anuncio e podem ser substituidas por fotos atualizadas dos quartos quando quiser.",
-    },
-    es: {
-      title: "Galeria de fotos",
-      subtitle: "Una vista mas cercana del apartamento",
-      featured: "Espacio principal",
-      tap: "Las fotos usan las imagenes actuales del anuncio y pueden reemplazarse por fotos actualizadas de las habitaciones cuando quieras.",
-    },
-  };
-  const copy = photoLabels[language];
-  const galleryPhotos = [
-    { image: images.hero, title: copy.featured },
-    { image: images.living, title: t.livingRoom },
-    { image: images.stayBedroom, title: t.bedroom },
-    { image: images.exterior, title: t.backyard },
-    { image: images.wifi, title: t.wifiRouter },
-  ];
+  const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null);
+  useEffect(() => {
+    if (selectedPhoto === null) return;
+    const handleKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setSelectedPhoto(null);
+      if (event.key === "ArrowLeft") setSelectedPhoto((current) => current === null ? null : (current - 1 + propertyPhotos.length) % propertyPhotos.length);
+      if (event.key === "ArrowRight") setSelectedPhoto((current) => current === null ? null : (current + 1) % propertyPhotos.length);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [selectedPhoto]);
+  const groups = [
+    { key: "arrival", label: { en: "Arrival & entrance", pt: "Chegada e entrada", es: "Llegada y entrada" } },
+    { key: "bedrooms", label: { en: "Bedrooms", pt: "Quartos", es: "Dormitorios" } },
+    { key: "inside", label: { en: "Kitchen & inside", pt: "Cozinha e interior", es: "Cocina e interior" } },
+    { key: "outdoors", label: { en: "Outdoor spaces", pt: "Áreas externas", es: "Zonas exteriores" } },
+  ] as const;
+  const copy = {
+    en: { title: "Photo gallery", subtitle: "See the home before you arrive", intro: "Follow the photos from the street entrance through the bedrooms, kitchen, bathroom and outdoor areas." },
+    pt: { title: "Galeria de fotos", subtitle: "Conheça a casa antes de chegar", intro: "Veja o caminho da rua até a entrada e conheça os quartos, a cozinha, o banheiro e as áreas externas." },
+    es: { title: "Galería de fotos", subtitle: "Conoce la casa antes de llegar", intro: "Sigue las fotos desde la calle hasta la entrada y conoce los dormitorios, la cocina, el baño y las zonas exteriores." },
+  }[language];
 
   return (
     <PageLayout
@@ -768,7 +811,7 @@ function PhotoGalleryPage({
     >
       <section className="overflow-hidden rounded-lg border border-[#e5e7df] bg-white shadow-sm">
         <div className="relative h-[18rem] sm:h-[24rem]">
-          <img src={galleryPhotos[0].image} alt={galleryPhotos[0].title} className="h-full w-full object-cover" />
+          <img src={images.entrance} alt={propertyPhotos[3].title[language]} className="h-full w-full object-cover" />
           <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(12,18,17,0.08),rgba(12,18,17,0.68))]" />
           <div className="absolute bottom-4 left-4 right-4 text-white">
             <div className="mb-2 inline-flex items-center gap-2 rounded-lg bg-white/15 px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.14em] backdrop-blur">
@@ -780,18 +823,35 @@ function PhotoGalleryPage({
         </div>
       </section>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {galleryPhotos.slice(1).map((photo) => (
-          <figure key={photo.title} className="overflow-hidden rounded-lg border border-[#e5e7df] bg-white shadow-sm">
-            <img src={photo.image} alt={photo.title} className="h-[13rem] w-full object-cover sm:h-[15rem]" />
-            <figcaption className="p-4 text-sm font-semibold">{photo.title}</figcaption>
-          </figure>
-        ))}
+      <div className="rounded-lg border border-[#dfe4dd] bg-[#ecf3f2] p-5">
+        <p className="text-sm leading-5 text-[#5f6b65]">{copy.intro}</p>
       </div>
 
-      <div className="rounded-lg border border-[#dfe4dd] bg-[#ecf3f2] p-5">
-        <p className="text-sm leading-5 text-[#5f6b65]">{copy.tap}</p>
-      </div>
+      {groups.map((group) => (
+        <section key={group.key} className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-bold">{group.label[language]}</h2>
+            <span className="text-xs text-[#5f6b65]">{propertyPhotos.filter((photo) => photo.group === group.key).length}</span>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {propertyPhotos.map((photo, index) => photo.group === group.key && (
+              <button key={photo.src} onClick={() => setSelectedPhoto(index)} className="overflow-hidden rounded-lg border border-[#e5e7df] bg-white text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+                <img src={photo.src} alt={photo.title[language]} loading="lazy" className="h-32 w-full object-cover sm:h-40" />
+                <span className="block p-3 text-xs font-semibold sm:text-sm">{photo.title[language]}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ))}
+      {selectedPhoto !== null && (
+        <div role="dialog" aria-modal="true" aria-label={propertyPhotos[selectedPhoto].title[language]} className="fixed inset-0 z-50 flex items-center justify-center bg-[#101816]/95 p-4">
+          <button onClick={() => setSelectedPhoto(null)} aria-label="Close" className="absolute right-4 top-4 rounded-lg bg-white/15 p-3 text-white"><X size={22} /></button>
+          <button onClick={() => setSelectedPhoto((selectedPhoto - 1 + propertyPhotos.length) % propertyPhotos.length)} aria-label="Previous photo" className="absolute left-2 top-1/2 rounded-lg bg-white/15 p-2 text-white sm:left-6"><ChevronLeft size={25} /></button>
+          <img src={propertyPhotos[selectedPhoto].src} alt={propertyPhotos[selectedPhoto].title[language]} className="max-h-[78svh] max-w-[88vw] object-contain" />
+          <button onClick={() => setSelectedPhoto((selectedPhoto + 1) % propertyPhotos.length)} aria-label="Next photo" className="absolute right-2 top-1/2 rounded-lg bg-white/15 p-2 text-white sm:right-6"><ChevronRight size={25} /></button>
+          <p className="absolute bottom-5 left-4 right-4 text-center text-sm font-semibold text-white">{selectedPhoto + 1} / {propertyPhotos.length} · {propertyPhotos[selectedPhoto].title[language]}</p>
+        </div>
+      )}
     </PageLayout>
   );
 }
@@ -845,6 +905,13 @@ function HouseGuide({
           title={t.amenities}
           description={t.included}
           onClick={() => navigate("amenities")}
+        />
+
+        <GuideRow
+          icon={<Images />}
+          title={language === "pt" ? "Fotos da casa" : language === "es" ? "Fotos de la casa" : "Photos of the home"}
+          description={language === "pt" ? "Veja todos os espaços" : language === "es" ? "Mira todos los espacios" : "See every space"}
+          onClick={() => navigate("photos")}
         />
 
         <GuideRow
@@ -931,7 +998,7 @@ const guideDetails = {
   "check-in": {
     titleKey: "checkInInstructions",
     eyebrow: "Self check-in",
-    image: images.living,
+    image: images.entrance,
     icon: <DoorOpen />,
     summary:
       "Use these steps when you arrive. The process is designed to be simple, private, and easy to follow.",
@@ -1001,7 +1068,7 @@ const guideDetails = {
   "how-things-work": {
     titleKey: "howThingsWork",
     eyebrow: "Devices",
-    image: images.wifi,
+    image: images.remote,
     icon: <Lightbulb />,
     summary:
       "Most controls are straightforward. These notes help keep the home comfortable and avoid accidental changes.",
@@ -1493,6 +1560,22 @@ function GuideDetailPage({
         </p>
       </section>
 
+      {page === "amenities" && (
+        <section className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {[
+            { src: images.living, title: language === "pt" ? "Duas camas de solteiro" : language === "es" ? "Dos camas individuales" : "Two single beds" },
+            { src: images.stayBedroom, title: language === "pt" ? "Cama queen" : language === "es" ? "Cama queen" : "Queen bed" },
+            { src: images.kitchen, title: language === "pt" ? "Cozinha" : language === "es" ? "Cocina" : "Kitchen" },
+            { src: images.bathroom, title: language === "pt" ? "Banheiro" : language === "es" ? "Baño" : "Bathroom" },
+          ].map((space) => (
+            <figure key={space.src} className="overflow-hidden rounded-lg border border-[#e5e7df] bg-white shadow-sm">
+              <img src={space.src} alt={space.title} loading="lazy" className="h-32 w-full object-cover sm:h-40" />
+              <figcaption className="p-3 text-xs font-semibold">{space.title}</figcaption>
+            </figure>
+          ))}
+        </section>
+      )}
+
       {copy.sections.map((section) => (
         <Card key={section.title}>
           <h3 className="text-base font-bold">{section.title}</h3>
@@ -1628,7 +1711,7 @@ function WifiPage({
 
       <img
         src={images.wifi}
-        alt="WiFi router"
+        alt={language === "pt" ? "Mesa com guia de boas-vindas" : language === "es" ? "Mesa con guía de bienvenida" : "Dining table with welcome guide"}
         className="h-[11.875rem] w-full rounded-lg object-cover sm:h-[12.5rem]"
       />
 
