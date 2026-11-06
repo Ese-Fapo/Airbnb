@@ -3,7 +3,7 @@ import { ArrowRight, ExternalLink, MapPin } from 'lucide-react'
 import './NearbySection.css'
 
 type Language = 'en' | 'pt' | 'es'
-type Category = 'food' | 'beaches' | 'sights'
+type Category = 'food' | 'essentials' | 'beaches' | 'sights'
 type Place = {
   name: string
   location: string
@@ -14,7 +14,7 @@ type Place = {
 
 const origin = 'R. Honoria Virgilina Machado 196 - Real Parque, Sao Jose - SC, 88113-478'
 const directions = (destination: string) => `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`
-const searchMore = (category: Category) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(category === 'food' ? 'restaurants near ' + origin : category === 'beaches' ? 'beaches near São José Santa Catarina' : 'attractions near São José Santa Catarina')}`
+const searchMore = (category: Category) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(category === 'food' ? 'restaurants near ' + origin : category === 'essentials' ? 'shops and services near ' + origin : category === 'beaches' ? 'beaches near Sao Jose Santa Catarina' : 'attractions near Sao Jose Santa Catarina')}`
 
 const places: Record<Category, Place[]> = {
   food: [
@@ -27,6 +27,118 @@ const places: Record<Category, Place[]> = {
     { name:'Panificadora e Confeitaria Uara', location:'R. Francisco Nappi, 428 · Ipiranga, São José', type:'Bakery & coffee', detail:{en:'Another neighborhood option for bread and coffee.',pt:'Outra opção do bairro para pães e café.',es:'Otra opción del barrio para pan y café.'}, source:'https://www.cylex.com.br/sao-jose/panificadora-e-confeitaria-uara-11898742.html' },
     { name:'Restaurante Sabor de Casa', location:'R. Otto Júlio Malina, 808 · Ipiranga, São José', type:'Casual meals', detail:{en:'Simple local meals in the neighboring Ipiranga area.',pt:'Refeições simples no bairro vizinho Ipiranga.',es:'Comidas sencillas en el barrio vecino de Ipiranga.'}, source:'https://www.guiatelefone.com/empresas/sao-jose-sc/bairro/ipiranga/lanches-e-salgados/lanchonetes' },
     { name:'Afonso Burger', location:'R. Otto Júlio Malina, 1035 · Ipiranga, São José', type:'Burgers', detail:{en:'Burger and delivery option in Ipiranga.',pt:'Opção de hambúrguer e delivery no Ipiranga.',es:'Hamburguesas y entrega a domicilio en Ipiranga.'}, source:'https://www.solutudo.com.br/empresas/sc/s-jose/marmitarias?category=marmitarias&mais_buscadas=1&pagina=4' },
+  ],
+  essentials: [
+    {
+      name: 'Mercado Costa',
+      location: 'R. Jos\u00e9 Ant\u00f4nio Pereira, 1144 \u00b7 Ipiranga, S\u00e3o Jos\u00e9',
+      type: 'Neighborhood market',
+      detail: {
+        en: 'A nearby grocery market for everyday essentials.',
+        pt: 'Mercado pr\u00f3ximo para compras do dia a dia.',
+        es: 'Mercado cercano para las compras diarias.',
+      },
+      source: 'https://www.lojalocal.com/12860108000133',
+    },
+    {
+      name: 'Mercado Ipiranga',
+      location: 'R. Jo\u00e3o Paulo Gaspar, 2565 \u00b7 Ipiranga, S\u00e3o Jos\u00e9',
+      type: 'Neighborhood market',
+      detail: {
+        en: 'Another local grocery option in the neighboring Ipiranga area.',
+        pt: 'Outra op\u00e7\u00e3o de mercado no bairro vizinho Ipiranga.',
+        es: 'Otra opci\u00f3n de mercado en el barrio vecino de Ipiranga.',
+      },
+      source: 'https://br.todosnegocios.com/pt/mercado-ipiranga_3t-48-3258-3967',
+    },
+    {
+      name: 'Kompr\u00e3o Koch Atacadista',
+      location: 'R. Franklin Cascaes, 2360 \u00b7 Real Parque, S\u00e3o Jos\u00e9',
+      type: 'Wholesale supermarket',
+      detail: {
+        en: 'Larger grocery and household shopping in Real Parque.',
+        pt: 'Atacarejo para compras de alimentos e itens para a casa no Real Parque.',
+        es: 'Supermercado mayorista para alimentos y productos del hogar en Real Parque.',
+      },
+      source: 'https://komprao.com.br/lojas/',
+    },
+    {
+      name: 'Villa Park Supermercado',
+      location: 'R. Jo\u00e3o Jos\u00e9 Martins, s/n \u00b7 Real Parque, S\u00e3o Jos\u00e9',
+      type: 'Supermarket',
+      detail: {
+        en: 'Neighborhood supermarket for groceries and everyday supplies.',
+        pt: 'Supermercado do bairro para alimentos e itens do dia a dia.',
+        es: 'Supermercado del barrio para alimentos y productos diarios.',
+      },
+      source: 'https://www.locaisdobrasil.com.br/encontre/mercados/real-parque/sao-jose-sc',
+    },
+    {
+      name: 'Mini Mercado Somel',
+      location: 'R. H\u00e9lio Est\u00e9fano Becker, 2620 \u00b7 Real Parque, S\u00e3o Jos\u00e9',
+      type: 'Mini market',
+      detail: {
+        en: 'Small local market for quick grocery stops.',
+        pt: 'Mercadinho do bairro para compras r\u00e1pidas.',
+        es: 'Peque\u00f1o mercado del barrio para compras r\u00e1pidas.',
+      },
+      source: 'https://www.locaisdobrasil.com.br/encontre/mercados/sao-jose-sc/mini-mercado-somel/66d62aa89a83835ca62309aa',
+    },
+    {
+      name: 'Farm\u00e1cia Farma + Popular',
+      location: 'R. Franklin Cascaes, 170, sala 02 \u00b7 Real Parque, S\u00e3o Jos\u00e9',
+      type: 'Pharmacy',
+      detail: {
+        en: 'Local pharmacy for medicines and personal care items.',
+        pt: 'Farm\u00e1cia local para medicamentos e itens de higiene.',
+        es: 'Farmacia local para medicamentos y art\u00edculos de higiene.',
+      },
+      source: 'https://www.solutudo.com.br/empresas/sc/s-jose/farmacias/farmacia-moreira-e-silva-ltda-24140938',
+    },
+    {
+      name: 'Farm\u00e1cia S\u00e3o Carlos',
+      location: 'R. M\u00e1rio C\u00e9sar da Costa, 2421 \u00b7 Real Parque, S\u00e3o Jos\u00e9',
+      type: 'Pharmacy',
+      detail: {
+        en: 'Another pharmacy option in the neighborhood.',
+        pt: 'Outra op\u00e7\u00e3o de farm\u00e1cia no bairro.',
+        es: 'Otra farmacia en el barrio.',
+      },
+      source: 'https://applocal.com.br/empresa/farmacia-sao-carlos/sao-jose/sc/9278252',
+    },
+    {
+      name: 'Unidade B\u00e1sica de Sa\u00fade Real Parque',
+      location: 'R. Cristo Rei, esquina com R. Almerinda Francisco dos Santos \u00b7 Real Parque, S\u00e3o Jos\u00e9',
+      type: 'Public health clinic',
+      detail: {
+        en: 'Municipal primary care clinic. Check eligibility and opening hours before visiting.',
+        pt: 'Unidade municipal de aten\u00e7\u00e3o b\u00e1sica. Confira atendimento e hor\u00e1rios antes de ir.',
+        es: 'Centro municipal de atenci\u00f3n primaria. Consulta la atenci\u00f3n y el horario antes de ir.',
+      },
+      source: 'https://saojose.sc.gov.br/dap/unidades-basicas-de-saude-postos-de-saude/',
+    },
+    {
+      name: 'Ponto de \u00f4nibus \u2014 Jo\u00e3o Jos\u00e9 Martins, 632',
+      location: 'R. Jo\u00e3o Jos\u00e9 Martins, 632 \u00b7 Real Parque, S\u00e3o Jos\u00e9',
+      type: 'Bus stop',
+      detail: {
+        en: 'Bus stop in Real Parque. Check the current route and arrival time before leaving.',
+        pt: 'Ponto de \u00f4nibus no Real Parque. Confira a linha e o hor\u00e1rio antes de sair.',
+        es: 'Parada de autob\u00fas en Real Parque. Consulta la l\u00ednea y el horario antes de salir.',
+      },
+      source: 'https://moovitapp.com/index/pt-br/transporte_p%C3%BAblico-Rua_Jo%C3%A3o_Jos%C3%A9_Martins-Florianopolis-site_22937741-1907',
+    },
+    {
+      name: 'Auto Posto Esta\u00e7\u00e3o 32',
+      location: 'R. Jo\u00e3o Jos\u00e9 Martins, s/n \u00b7 Real Parque, S\u00e3o Jos\u00e9',
+      type: 'Fuel station',
+      detail: {
+        en: 'Fuel station listed in the neighborhood. Confirm services before going.',
+        pt: 'Posto de combust\u00edvel listado no bairro. Confirme os servi\u00e7os antes de ir.',
+        es: 'Gasolinera registrada en el barrio. Confirma los servicios antes de ir.',
+      },
+      source: 'https://santacatarina.net.br/sobre/auto-posto-estacao-32-sao-jose-sc-22053525',
+    },
   ],
   beaches: [
     { name:'Praia da Guararema', location:'Ponta de Baixo · São José', type:'São José', detail:{en:'The city’s small bay beach with a deck and waterfront restaurants. Check water quality before swimming.',pt:'Praia da cidade, com deck e restaurantes à beira-mar. Confira a balneabilidade antes do banho.',es:'Playa de la ciudad con paseo y restaurantes. Consulta la calidad del agua antes de bañarte.'}, source:'https://saojose.sc.gov.br/praia-da-guararema-em-ponta-de-baixo-e-considerada-propria-para-banho/76033/' },
@@ -55,9 +167,9 @@ const places: Record<Category, Place[]> = {
 }
 
 const ui = {
-  en:{eyebrow:'EXPLORE THE AREA',title:'Around Real Parque.',intro:'A researched starting point for food, beach days and sightseeing. Routes open from the guest home; check current business details before you go.',tabs:{food:'Food & coffee',beaches:'Beaches',sights:'Things to see'},route:'Get directions',details:'Place details',more:'See more on Maps',water:'Beach water quality can change after rain. Check the latest state report before swimming.',check:'Check water quality'},
-  pt:{eyebrow:'EXPLORE A REGIÃO',title:'Perto do Real Parque.',intro:'Opções pesquisadas de comida, praias e passeios. As rotas partem da hospedagem; confira os dados atuais antes de sair.',tabs:{food:'Comer e beber',beaches:'Praias',sights:'O que visitar'},route:'Como chegar',details:'Mais detalhes',more:'Ver mais no Maps',water:'A balneabilidade pode mudar após chuvas. Confira o relatório estadual antes de entrar no mar.',check:'Ver balneabilidade'},
-  es:{eyebrow:'EXPLORA LA ZONA',title:'Cerca de Real Parque.',intro:'Opciones verificadas para comer, ir a la playa y pasear. Las rutas salen del alojamiento; consulta los datos actuales antes de salir.',tabs:{food:'Comida y café',beaches:'Playas',sights:'Qué visitar'},route:'Cómo llegar',details:'Más detalles',more:'Ver más en Maps',water:'La calidad del agua puede cambiar después de la lluvia. Consulta el informe estatal antes de bañarte.',check:'Ver calidad del agua'},
+  en:{eyebrow:'EXPLORE THE AREA',title:'Around Real Parque.',intro:'Food, practical services, beaches and sightseeing around Real Parque. Routes open from the guest home; check current details before you go.',tabs:{food:'Food & coffee',essentials:'Essentials',beaches:'Beaches',sights:'Things to see'},route:'Get directions',details:'Place details',more:'See more on Maps',water:'Beach water quality can change after rain. Check the latest state report before swimming.',check:'Check water quality'},
+  pt:{eyebrow:'EXPLORE A REGIÃO',title:'Perto do Real Parque.',intro:'Comida, servi\u00e7os essenciais, praias e passeios perto do Real Parque. As rotas partem da hospedagem; confira os dados atuais antes de sair.',tabs:{food:'Comer e beber',essentials:'Essenciais',beaches:'Praias',sights:'O que visitar'},route:'Como chegar',details:'Mais detalhes',more:'Ver mais no Maps',water:'A balneabilidade pode mudar após chuvas. Confira o relatório estadual antes de entrar no mar.',check:'Ver balneabilidade'},
+  es:{eyebrow:'EXPLORA LA ZONA',title:'Cerca de Real Parque.',intro:'Comida, servicios esenciales, playas y paseos cerca de Real Parque. Las rutas salen del alojamiento; consulta los datos actuales antes de salir.',tabs:{food:'Comida y café',essentials:'Servicios',beaches:'Playas',sights:'Qué visitar'},route:'Cómo llegar',details:'Más detalles',more:'Ver más en Maps',water:'La calidad del agua puede cambiar después de la lluvia. Consulta el informe estatal antes de bañarte.',check:'Ver calidad del agua'},
 }
 
 export function NearbySection({language}:{language:Language}) {
@@ -65,7 +177,7 @@ export function NearbySection({language}:{language:Language}) {
   const t = ui[language]
   return <section className="nearby-section section-wrap" id="explore">
     <div className="section-heading"><div><span className="eyebrow">{t.eyebrow}</span><h2>{t.title}</h2></div><p>{t.intro}</p></div>
-    <div className="explore-tabs" role="tablist" aria-label={t.eyebrow}>{(['food','beaches','sights'] as Category[]).map(key=><button key={key} role="tab" aria-selected={category===key} className={category===key?'selected':''} onClick={()=>setCategory(key)}>{t.tabs[key]}<span>{places[key].length}</span></button>)}</div>
+    <div className="explore-tabs" role="tablist" aria-label={t.eyebrow}>{(['food','essentials','beaches','sights'] as Category[]).map(key=><button key={key} role="tab" aria-selected={category===key} className={category===key?'selected':''} onClick={()=>setCategory(key)}>{t.tabs[key]}<span>{places[key].length}</span></button>)}</div>
     {category==='beaches'&&<div className="water-note"><p>{t.water}</p><a href="https://balneabilidade.ima.sc.gov.br/" target="_blank" rel="noreferrer">{t.check}<ExternalLink size={15}/></a></div>}
     <div className="places-grid">{places[category].map((place,index)=><article className="place-card" key={place.name}><div className="place-top"><span>{String(index+1).padStart(2,'0')} / {language === 'en' ? place.type : t.tabs[category]}</span><MapPin size={18}/></div><h3>{place.name}</h3><p>{place.detail[language]}</p><div className="place-location"><MapPin size={15}/>{place.location}</div><div className="place-actions"><a href={directions(place.name+', '+place.location)} target="_blank" rel="noreferrer">{t.route}<ArrowRight size={16}/></a><a href={place.source} target="_blank" rel="noreferrer">{place.source.includes('balneabilidade.ima.sc.gov.br') ? t.check : t.details}<ExternalLink size={14}/></a></div></article>)}</div>
     <a className="explore-more" href={searchMore(category)} target="_blank" rel="noreferrer">{t.more}<ArrowRight size={17}/></a>

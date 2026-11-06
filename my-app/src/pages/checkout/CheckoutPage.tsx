@@ -7,7 +7,7 @@ import type { PageProps } from "../../types";
 
 export function CheckoutPage({ language, setLanguage, t, navigate }: PageProps) {
   return (
-    <PageLayout title={t.checkout} language={language} setLanguage={setLanguage} t={t} navigate={navigate}>
+    <PageLayout title="Check-out" language={language} setLanguage={setLanguage} t={t} navigate={navigate}>
       <img src={images.entrance} alt={language === "pt" ? "Entrada privativa" : language === "es" ? "Entrada privada" : "Private entrance"} className="h-[11.875rem] w-full rounded-lg object-cover sm:h-[205px]" />
 
       <div>

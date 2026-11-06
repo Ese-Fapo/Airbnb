@@ -34,7 +34,7 @@ export function PageLayout({
           <ArrowLeft size={19} />
         </button>
 
-        <h1 className="min-w-0 truncate text-center text-sm font-bold sm:text-base">{title}</h1>
+        <h1 lang="pt-BR" className="min-w-0 truncate text-center text-sm font-bold sm:text-base">{title}</h1>
 
         {t && language && setLanguage ? (
           <LanguageSwitcher language={language} setLanguage={setLanguage} t={t} />

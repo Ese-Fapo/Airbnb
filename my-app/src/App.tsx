@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Copy,
   DoorOpen,
+  ExternalLink,
   FileText,
   Home,
   Images,
@@ -25,6 +26,7 @@ import {
 } from "lucide-react";
 
 import { BottomNavigation } from "./components/BottomNavigation";
+import { InstallPrompt } from "./components/InstallPrompt";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { MobileMenu } from "./components/MobileMenu";
 import { PageLayout } from "./components/PageLayout";
@@ -65,9 +67,9 @@ const translations: Record<Language, Record<string, string>> = {
     makeHome: "Make yourself at home",
     livingRoom: "Room 1",
     bedroom: "Bedroom",
-    everythingHere: "Everything you need is here",
-    everythingHereText:
-      "Start with the arrival details, then use the guide for house rules, WiFi, and nearby suggestions.",
+    creatorCredit: "site created by S.P",
+    creatorMessage: "Like this guest guide? I build professional websites for businesses at Sites Profissionai.",
+    creatorCta: "Build my website",
     property: "Property",
     address: "Address",
     fromAirport: "Use the address below for your route to Real Parque, São José:",
@@ -102,6 +104,14 @@ const translations: Record<Language, Record<string, string>> = {
     noPets: "No pets allowed.",
     respect: "Respect",
     respectDesc: "Treat our home like your own.",
+    noStealing: "No Stealing",
+    noStealingDesc: "Do not take any items from the property.",
+    noBreakingGlasses: "Do Not Break Glasses",
+    noBreakingGlassesDesc: "Handle glasses and other items with care.",
+    gardenRules: "Garden Is Not for Guests",
+    gardenRulesDesc: "Do not enter the garden or take anything from it.",
+    brokenItems: "Broken Items",
+    brokenItemsDesc: "Guests will be charged for anything they break.",
     thankRespect: "Thank you for respecting our home and neighbors!",
     password: "Password",
     copyPassword: "Copy password",
@@ -164,9 +174,9 @@ const translations: Record<Language, Record<string, string>> = {
     makeHome: "Sinta-se em casa",
     livingRoom: "Quarto com duas camas",
     bedroom: "Quarto com cama queen",
-    everythingHere: "Tudo que você precisa está aqui",
-    everythingHereText:
-      "Comece pelos detalhes de chegada e use o guia para regras da casa, WiFi e sugestões próximas.",
+    creatorCredit: "site created by S.P",
+    creatorMessage: "Gostou deste guia? Crio sites profissionais para empresas. Conheça meu trabalho na Sites Profissionai.",
+    creatorCta: "Quero meu site",
     property: "Propriedade",
     address: "Endereço",
     fromAirport: "Use o endereço abaixo para traçar a rota até o Real Parque, em São José:",
@@ -200,6 +210,14 @@ const translations: Record<Language, Record<string, string>> = {
     noPets: "Não são permitidos animais.",
     respect: "Respeito",
     respectDesc: "Trate nossa casa como se fosse sua.",
+    noStealing: "N\u00e3o Roubar",
+    noStealingDesc: "N\u00e3o leve nenhum item da propriedade.",
+    noBreakingGlasses: "N\u00e3o Quebre Copos",
+    noBreakingGlassesDesc: "Manuseie copos e outros itens com cuidado.",
+    gardenRules: "Jardim N\u00e3o Dispon\u00edvel para H\u00f3spedes",
+    gardenRulesDesc: "N\u00e3o entre no jardim nem retire nada de l\u00e1.",
+    brokenItems: "Itens Quebrados",
+    brokenItemsDesc: "Itens quebrados ser\u00e3o cobrados do h\u00f3spede.",
     thankRespect: "Obrigado por respeitar nossa casa e vizinhos!",
     password: "Senha",
     copyPassword: "Copiar senha",
@@ -262,9 +280,9 @@ const translations: Record<Language, Record<string, string>> = {
     makeHome: "Siéntete como en casa",
     livingRoom: "Dormitorio",
     bedroom: "Dormitorio",
-    everythingHere: "Todo lo que necesitas está aquí",
-    everythingHereText:
-      "Empieza con los detalles de llegada y usa la guía para reglas de la casa, WiFi y sugerencias cercanas.",
+    creatorCredit: "Creado por Ese Victor",
+    creatorMessage: "Te gusta esta gu\u00eda? Creo sitios web profesionales para empresas en Sites Profissionai.",
+    creatorCta: "Quiero mi sitio web",
     property: "Propiedad",
     address: "Dirección",
     fromAirport: "Usa la dirección de abajo para llegar a Real Parque, São José:",
@@ -298,6 +316,14 @@ const translations: Record<Language, Record<string, string>> = {
     noPets: "No se permiten mascotas.",
     respect: "Respeto",
     respectDesc: "Trata nuestra casa como la tuya.",
+    noStealing: "No Robar",
+    noStealingDesc: "No te lleves ning\u00fan art\u00edculo de la propiedad.",
+    noBreakingGlasses: "No Romper Vasos",
+    noBreakingGlassesDesc: "Manipula los vasos y otros objetos con cuidado.",
+    gardenRules: "Jard\u00edn No Disponible para Hu\u00e9spedes",
+    gardenRulesDesc: "No entres al jard\u00edn ni tomes nada de all\u00ed.",
+    brokenItems: "Objetos Rotos",
+    brokenItemsDesc: "Se cobrar\u00e1 a los hu\u00e9spedes por cualquier objeto que rompan.",
     thankRespect: "Gracias por respetar nuestra casa y vecinos!",
     password: "Contraseña",
     copyPassword: "Copiar contraseña",
@@ -341,10 +367,14 @@ function getDefaultLanguage(): Language {
     return storedLanguage;
   }
 
-  const deviceLanguage = window.navigator.language.toLowerCase();
-  if (deviceLanguage.startsWith("pt")) return "pt";
-  if (deviceLanguage.startsWith("es")) return "es";
-  return "en";
+  const preferredLanguages = window.navigator.languages?.length
+    ? window.navigator.languages
+    : [window.navigator.language];
+  for (const preferredLanguage of preferredLanguages) {
+    const code = preferredLanguage.toLowerCase().split("-")[0];
+    if (code === "pt" || code === "en" || code === "es") return code;
+  }
+  return "pt";
 }
 
 function App() {
@@ -468,6 +498,8 @@ function App() {
         navigate={navigate}
       />
 
+      <InstallPrompt language={language} />
+
       <button
         onClick={() => setMenuOpen(true)}
         aria-label={language === "pt" ? "Abrir menu" : language === "es" ? "Abrir menú" : "Open menu"}
@@ -557,16 +589,17 @@ function HomePage({
 
           <div className="pb-1 text-white">
 
-            <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.18em] text-white/90 backdrop-blur-md">
+            <div lang="pt-BR" className="mb-3 inline-flex w-fit items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.18em] text-white/90 backdrop-blur-md">
               <Sparkles size={13} />
-              {t.guestGuide}
+              {translations.pt.guestGuide}
             </div>
 
-            <p className="mb-1 text-[15px] font-semibold uppercase tracking-[0.18em] text-[#ffd6de]">
-              {t.welcomeTo}
+            <p lang="pt-BR" className="mb-1 text-[15px] font-semibold uppercase tracking-[0.18em] text-[#ffd6de]">
+              {translations.pt.welcomeTo}
             </p>
 
             <h1
+              lang="pt-BR"
               className="
                 max-w-[560px]
                 text-[38px]
@@ -577,9 +610,9 @@ function HomePage({
                 lg:text-[68px]
               "
             >
-              {t.heroTitleLine1}
+              {translations.pt.heroTitleLine1}
               <br />
-              {t.heroTitleLine2}
+              {translations.pt.heroTitleLine2}
             </h1>
 
             <p className="mt-5 max-w-[440px] text-[16px] leading-6 text-white/90 md:text-[17px]">
@@ -756,18 +789,28 @@ function HomePage({
 
         <div className="mt-4 rounded-lg border border-[#dfe4dd] bg-[#ecf3f2] p-5 md:p-6">
 
-          <Leaf
+          <Sparkles
             size={25}
             className="text-[#0f766e]"
           />
 
           <h3 className="mt-3 font-bold">
-            {t.everythingHere}
+            {t.creatorCredit}
           </h3>
 
           <p className="mt-1 text-sm leading-5 text-[#5f6b65]">
-            {t.everythingHereText}
+            {t.creatorMessage}
           </p>
+
+          <a
+            href="https://sitesprofissionai.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#ff385c] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#e42e50]"
+          >
+            {t.creatorCta}
+            <ExternalLink size={15} />
+          </a>
 
         </div>
 
@@ -808,7 +851,7 @@ function PhotoGalleryPage({
 
   return (
     <PageLayout
-      title={copy.title}
+      title="Galeria de fotos"
       language={language}
       setLanguage={setLanguage}
       t={t}
@@ -877,7 +920,7 @@ function HouseGuide({
 }: PageProps) {
   return (
     <PageLayout
-        title={t.houseGuide}
+        title={translations.pt.houseGuide}
         language={language}
         setLanguage={setLanguage}
         t={t}
@@ -1541,7 +1584,7 @@ function GuideDetailPage({
 
   return (
     <PageLayout
-      title={title}
+      title={translations.pt[detail.titleKey] ?? title}
       language={language}
       setLanguage={setLanguage}
       t={t}

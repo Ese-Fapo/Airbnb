@@ -63,7 +63,7 @@ export function DirectionPage({ language, setLanguage, t, navigate }: PageProps)
   ].filter(Boolean);
 
   return (
-    <PageLayout title={t.gettingHere} language={language} setLanguage={setLanguage} t={t} navigate={navigate}>
+    <PageLayout title="Como Chegar" language={language} setLanguage={setLanguage} t={t} navigate={navigate}>
       <img src={images.hero} alt={t.property} className="h-[11.875rem] w-full rounded-lg object-cover sm:h-[205px]" />
 
       <Card>
