@@ -1,4 +1,4 @@
-import { DoorOpen, FileText, Heart, Home, MapPin, MessageCircle, Navigation, Wifi, X } from "lucide-react";
+import { DoorOpen, FileText, Heart, Home, Images, MapPin, MessageCircle, Navigation, Wifi, X } from "lucide-react";
 
 import { hostWhatsappUrl } from "../data/contact";
 import type { Page, Translation } from "../types";
@@ -20,6 +20,7 @@ export function MobileMenu({
     { page: "home", title: t.home, icon: <Home /> },
     { page: "getting-here", title: t.gettingHere, icon: <Navigation /> },
     { page: "guide", title: t.houseGuide, icon: <FileText /> },
+    { page: "photos", title: t.yourHome, icon: <Images /> },
     { page: "rules", title: t.houseRules, icon: <Heart /> },
     { page: "wifi", title: t.wifi, icon: <Wifi /> },
     { page: "nearby", title: t.exploreNearby, icon: <MapPin /> },
@@ -31,7 +32,7 @@ export function MobileMenu({
       <div className="absolute bottom-0 left-0 right-0 max-h-[calc(100svh-1rem)] overflow-y-auto rounded-t-[1.5rem] bg-[#f7f7f2] p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] sm:p-6">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="min-w-0 pr-3 text-lg font-bold sm:text-xl">{t.guestGuide}</h2>
-          <button onClick={close} className="flex h-10 w-10 items-center justify-center rounded-lg bg-white">
+          <button onClick={close} aria-label={t.close ?? "Close"} className="flex h-10 w-10 items-center justify-center rounded-lg bg-white">
             <X size={19} />
           </button>
         </div>

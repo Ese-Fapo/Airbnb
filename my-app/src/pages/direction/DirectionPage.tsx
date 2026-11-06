@@ -1,13 +1,24 @@
+import { useState } from "react";
 import { Car, Copy, MapPin, Navigation, Phone } from "lucide-react";
 
 import { images } from "../../data/images";
 import type { PageProps } from "../../types";
 import { PageLayout } from "../../components/PageLayout";
 import { Card, IconBox } from "../../components/ui";
+import { hostPhoneNumber } from "../../data/contact";
 
 export function DirectionPage({ language, setLanguage, t, navigate }: PageProps) {
   const address = "R. Honoria Virgilina Machado 196 - Real Parque, Sao Jose - SC, 88113-478";
-  const phone = "+55 48 99046-843";
+  const [addressCopied, setAddressCopied] = useState(false);
+  const copyAddress = async () => {
+    try {
+      await navigator.clipboard.writeText(address);
+      setAddressCopied(true);
+      window.setTimeout(() => setAddressCopied(false), 1800);
+    } catch {
+      setAddressCopied(false);
+    }
+  };
   const parkingCopy = {
     en: {
       title: "Parking Information",
@@ -64,7 +75,7 @@ export function DirectionPage({ language, setLanguage, t, navigate }: PageProps)
             <h3 className="font-semibold">{t.address}</h3>
             <p className="mt-2 text-sm leading-6 text-gray-600">{address}</p>
           </div>
-          <button onClick={() => navigator.clipboard?.writeText(address)} className="shrink-0 text-gray-400">
+          <button onClick={copyAddress} aria-label={addressCopied ? t.copied : t.copy} className="shrink-0 text-gray-400">
             <Copy size={19} />
           </button>
         </div>
@@ -123,7 +134,7 @@ export function DirectionPage({ language, setLanguage, t, navigate }: PageProps)
         </button>
 
         <button
-          onClick={() => window.open(`tel:${phone}`, "_blank")}
+          onClick={() => window.location.href = `tel:${hostPhoneNumber.replace(/[^+\d]/g, "")}`}
           className="flex min-w-0 items-center justify-center gap-2 rounded-lg bg-[#ecf3f2] px-3 py-4 text-sm font-semibold text-[#123c3c] transition hover:bg-[#dcebe8]"
         >
           <Phone size={17} />

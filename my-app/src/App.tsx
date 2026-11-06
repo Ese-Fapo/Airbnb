@@ -162,8 +162,8 @@ const translations: Record<Language, Record<string, string>> = {
     beforeLeaving: "Antes de sair",
     yourStay: "Sua estadia",
     makeHome: "Sinta-se em casa",
-    livingRoom: "Quatro 1",
-    bedroom: "Quatro 2",
+    livingRoom: "Quarto com duas camas",
+    bedroom: "Quarto com cama queen",
     everythingHere: "Tudo que você precisa está aqui",
     everythingHereText:
       "Comece pelos detalhes de chegada e use o guia para regras da casa, WiFi e sugestões próximas.",
@@ -176,7 +176,7 @@ const translations: Record<Language, Record<string, string>> = {
     openMaps: "Abrir no Maps",
     callHost: "Ligar para anfitrião",
     yourHome: "Sua Casa",
-    livingRoomAlt: "Quatro ",
+    livingRoomAlt: "Quarto com duas camas",
     beforeArrive: "Antes de Chegar",
     allNeed: "Tudo que você precisa saber",
     checkInInstructions: "Instruções de Check-in",
@@ -274,7 +274,7 @@ const translations: Record<Language, Record<string, string>> = {
     openMaps: "Abrir en Maps",
     callHost: "Llamar anfitrión",
     yourHome: "Tu Casa",
-    livingRoomAlt: "Quatro 2",
+    livingRoomAlt: "Habitación con dos camas",
     beforeArrive: "Antes de Llegar",
     allNeed: "Todo lo que necesitas saber",
     checkInInstructions: "Instrucciones de Check-in",
@@ -352,6 +352,10 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [language, setLanguage] = useState<Language>(getDefaultLanguage);
   const t = translations[language];
+
+  useEffect(() => {
+    document.documentElement.lang = language === "pt" ? "pt-BR" : language;
+  }, [language]);
 
   const changeLanguage = (newLanguage: Language) => {
     setLanguage(newLanguage);
@@ -466,6 +470,7 @@ function App() {
 
       <button
         onClick={() => setMenuOpen(true)}
+        aria-label={language === "pt" ? "Abrir menu" : language === "es" ? "Abrir menú" : "Open menu"}
         className="
           fixed
           bottom-24
@@ -1625,9 +1630,13 @@ function WifiPage({
   const [copiedPassword, setCopiedPassword] = useState(false);
 
   const copyPassword = async () => {
-    await navigator.clipboard?.writeText(password);
-    setCopiedPassword(true);
-    window.setTimeout(() => setCopiedPassword(false), 1800);
+    try {
+      await navigator.clipboard.writeText(password);
+      setCopiedPassword(true);
+      window.setTimeout(() => setCopiedPassword(false), 1800);
+    } catch {
+      setCopiedPassword(false);
+    }
   };
 
   return (
@@ -1648,7 +1657,7 @@ function WifiPage({
         </div>
 
         <p className="mt-6 text-sm text-[#5f6b65]">
-          Network
+          {t.network}
         </p>
 
         <h2 className="mt-1 text-xl font-bold">
@@ -1660,7 +1669,7 @@ function WifiPage({
       <Card>
 
         <p className="text-sm text-gray-500">
-          Password
+          {t.password}
         </p>
 
         <div className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -1671,7 +1680,7 @@ function WifiPage({
 
           <button
             onClick={copyPassword}
-            aria-label={copiedPassword ? "Password copied" : "Copy password"}
+            aria-label={copiedPassword ? t.passwordCopied : t.copyPassword}
             className={`
               flex
               w-full
@@ -1695,12 +1704,12 @@ function WifiPage({
             {copiedPassword ? (
               <>
                 <Check size={18} />
-                Copied
+                {t.copied}
               </>
             ) : (
               <>
                 <Copy size={18} />
-                Copy
+                {t.copy}
               </>
             )}
           </button>
@@ -1722,12 +1731,11 @@ function WifiPage({
           <div>
 
             <h3 className="font-semibold">
-              Having trouble?
+              {t.trouble}
             </h3>
 
             <p className="mt-1 text-sm leading-5 text-gray-500">
-            Contact us
-              if you need help.
+              {t.contactHelp}
             </p>
 
           </div>

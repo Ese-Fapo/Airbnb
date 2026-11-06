@@ -28,6 +28,7 @@ export function PageLayout({
       <header className="sticky top-0 z-20 -mx-4 mb-5 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-[#f7f7f2]/95 px-4 py-3 backdrop-blur max-[360px]:-mx-3 max-[360px]:px-3 md:-mx-6 md:px-6 md:py-4">
         <button
           onClick={onBack ?? (() => navigate(backPage))}
+          aria-label={language === "pt" ? "Voltar" : language === "es" ? "Volver" : "Back"}
           className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm transition hover:bg-[#fff0f3] hover:text-[#ff385c]"
         >
           <ArrowLeft size={19} />

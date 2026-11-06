@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ArrowRight, Ban, Check, ChevronRight, Heart, Images, ShieldCheck, Sparkles, Moon } from "lucide-react";
+import { ArrowRight, Check, ChevronRight, Images } from "lucide-react";
 
 export function Card({ children }: { children: ReactNode }) {
   return (
@@ -118,7 +118,7 @@ export function GuideRow({
 }
 
 export function RuleRow({
-  icon: _icon,
+  icon,
   title,
   description,
 }: {
@@ -126,23 +126,14 @@ export function RuleRow({
   title: string;
   description: string;
 }) {
-  const iconMap: Record<string, ReactNode> = {
-    "No Smoking": <Ban size={20} />,
-    "No Parties": <ShieldCheck size={20} />,
-    "Quiet Hours": <Moon size={20} />,
-    Pets: <Heart size={20} />,
-    Respect: <Sparkles size={20} />,
-  };
-  const displayDescription = title === "Quiet Hours" ? "10 PM - 8 AM" : description;
-
   return (
     <div className="flex min-w-0 items-center gap-3 rounded-lg border border-[#e5e7df] bg-white p-4 shadow-sm transition hover:border-[#ffd0d9] sm:gap-4 md:p-5">
       <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#fff0f3] text-[#ff385c]">
-        {iconMap[title] ?? _icon}
+        {icon}
       </div>
       <div className="min-w-0">
         <h3 className="text-sm font-semibold">{title}</h3>
-        <p className="mt-1 text-xs text-gray-500">{displayDescription}</p>
+        <p className="mt-1 text-xs text-gray-500">{description}</p>
       </div>
     </div>
   );
