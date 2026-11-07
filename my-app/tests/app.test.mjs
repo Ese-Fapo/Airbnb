@@ -60,6 +60,28 @@ test('App still opens when browser storage is blocked', () => {
   assert.match(renderToStaticMarkup(createElement(App)), /Guesthouse/);
 });
 
+for (const scenario of [
+  { name: 'first visit in Brazilian Portuguese', preferred: ['pt-BR'], saved: null, title: 'Hospedaria' },
+  { name: 'first visit in American English', preferred: ['en-US'], saved: null, title: 'Guesthouse' },
+  { name: 'first visit in regional Spanish', preferred: ['es-AR'], saved: null, title: 'Casa de Huéspedes' },
+  { name: 'next supported preferred language', preferred: ['fr-FR', 'es-ES', 'en-US'], saved: null, title: 'Casa de Huéspedes' },
+  { name: 'saved Portuguese overrides English device', preferred: ['en-US'], saved: 'pt', title: 'Hospedaria' },
+  { name: 'saved English overrides Portuguese device', preferred: ['pt-BR'], saved: 'en', title: 'Guesthouse' },
+  { name: 'invalid saved choice falls back to device', preferred: ['es-CL'], saved: 'invalid', title: 'Casa de Huéspedes' },
+  { name: 'unsupported languages fall back to Portuguese', preferred: ['fr-FR', 'de-DE'], saved: null, title: 'Hospedaria' },
+  { name: 'missing preferred list uses browser language', preferred: [], browser: 'en-GB', saved: null, title: 'Guesthouse' },
+]) {
+  test(`Language preference: ${scenario.name}`, () => {
+    environment();
+    window.navigator.languages = scenario.preferred;
+    window.navigator.language = scenario.browser ?? scenario.preferred[0];
+    window.localStorage.getItem = () => scenario.saved;
+    const html = renderToStaticMarkup(createElement(App));
+    const heading = html.match(/<h1\b[^>]*>(.*?)<\/h1>/s)?.[1];
+    assert.ok(heading?.includes(scenario.title));
+  });
+}
+
 test('Unknown hashes fall back to home and known page hashes survive refresh', () => {
   for (const page of pages) assert.equal(pageFromHash(`#${page}`), page);
   for (const value of ['', '#unknown', '#%invalid', '#<script>']) assert.equal(pageFromHash(value), 'home');

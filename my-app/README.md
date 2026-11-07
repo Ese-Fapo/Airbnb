@@ -10,7 +10,7 @@ Use Node.js 24 LTS or a compatible recent Node version. From this directory:
 - `npm ci` installs the locked dependencies.
 - `npm run dev` starts the local development server.
 - `npm run lint` checks the code.
-- `npm test` runs 50 automated checks, including server rendering of all 14 pages in all three languages.
+- `npm test` runs 59 automated checks, including language preference detection and server rendering of all 14 pages in all three languages.
 - `npm run build` checks TypeScript and creates the production app in `dist`.
 - `npm run preview` serves the production build locally.
 
