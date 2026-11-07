@@ -29,6 +29,7 @@ export function LanguageSwitcher({
           ? "border-white/25 bg-black/25 text-white"
           : "border-[#e5e7df] bg-white text-[#17201c]"
       }`}
+      role="group"
       aria-label={t.language}
     >
       <div className="inline-flex items-center gap-1">
@@ -37,12 +38,12 @@ export function LanguageSwitcher({
             key={option.code}
             type="button"
             onClick={() => setLanguage(option.code)}
-            className={`min-w-9 rounded-md px-2.5 py-1.5 text-[11px] font-bold transition ${
+            className={`min-h-11 min-w-11 rounded-md px-2.5 py-1.5 text-[11px] font-bold transition ${
               language === option.code
-                ? "bg-[#ff385c] text-white shadow-sm"
+                ? "bg-[#d92148] text-white shadow-sm"
                 : isHero
                   ? "text-white/80 hover:bg-white/15 hover:text-white"
-                  : "text-[#68716c] hover:bg-[#fff0f3] hover:text-[#ff385c]"
+                  : "text-[#68716c] hover:bg-[#fff0f3] hover:text-[#c91e40]"
             }`}
             aria-pressed={language === option.code}
           >

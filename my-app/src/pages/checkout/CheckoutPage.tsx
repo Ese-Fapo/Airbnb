@@ -12,7 +12,7 @@ export function CheckoutPage({ language, setLanguage, t, navigate }: PageProps) 
 
       <div>
         <p className="text-sm text-gray-500">{t.checkoutTime}</p>
-        <h2 className="mt-1 text-2xl font-bold">11:00 AM</h2>
+        <h2 className="mt-1 text-2xl font-bold">{language === "en" ? "11:00 AM" : "11h"}</h2>
       </div>
 
       <div>
@@ -28,7 +28,7 @@ export function CheckoutPage({ language, setLanguage, t, navigate }: PageProps) 
       <div className="rounded-lg border border-[#dfe4dd] bg-[#ecf3f2] p-5">
         <h3 className="font-semibold">{t.thankStay}</h3>
         <p className="mt-1 text-sm text-[#5f6b65]">{t.wonderfulVisit}</p>
-        <Heart className="ml-auto mt-2 text-[#ff385c]" fill="#ff385c" size={24} />
+        <Heart className="ml-auto mt-2 text-[#c91e40]" fill="#ff385c" size={24} />
       </div>
     </PageLayout>
   );

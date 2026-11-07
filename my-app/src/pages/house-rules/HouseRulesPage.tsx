@@ -7,7 +7,7 @@ import type { PageProps } from "../../types";
 
 export function HouseRulesPage({ language, setLanguage, t, navigate }: PageProps) {
   return (
-    <PageLayout title="Regras da Casa" language={language} setLanguage={setLanguage} t={t} navigate={navigate}>
+    <PageLayout title={t.houseRules} language={language} setLanguage={setLanguage} t={t} navigate={navigate}>
       <img src={images.exterior} alt={t.backyard} className="h-[11.875rem] w-full rounded-lg object-cover sm:h-[205px]" />
 
       <RuleRow icon={<Ban size={20} />} title={t.noSmoking} description={t.smokeOutside} />
@@ -25,7 +25,7 @@ export function HouseRulesPage({ language, setLanguage, t, navigate }: PageProps
           <div>
             <h3 className="font-semibold">{t.thankRespect}</h3>
           </div>
-          <Heart className="text-[#ff385c]" fill="#ff385c" size={25} />
+          <Heart className="text-[#c91e40]" fill="#ff385c" size={25} />
         </div>
       </div>
     </PageLayout>

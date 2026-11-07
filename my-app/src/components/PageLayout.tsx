@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { ArrowLeft, Bell } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import type { Language, Page, Translation } from "../types";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -24,25 +24,21 @@ export function PageLayout({
   onBack?: () => void;
 }) {
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl bg-[#f7f7f2] px-4 pb-32 shadow-2xl max-[360px]:px-3 md:my-4 md:rounded-2xl md:px-6 md:pb-36">
-      <header className="sticky top-0 z-20 -mx-4 mb-5 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 bg-[#f7f7f2]/95 px-4 py-3 backdrop-blur max-[360px]:-mx-3 max-[360px]:px-3 md:-mx-6 md:px-6 md:py-4">
+    <main id="main-content" tabIndex={-1} className="mx-auto min-h-screen w-full max-w-6xl bg-[#f7f7f2] px-4 pb-[calc(env(safe-area-inset-bottom)+8rem)] shadow-2xl max-[360px]:px-3 md:my-4 md:rounded-2xl md:px-6 md:pb-36">
+      <header className="sticky top-0 z-20 -mx-4 mb-5 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 bg-[#f7f7f2]/95 px-4 py-3 backdrop-blur max-[360px]:-mx-3 max-[360px]:px-3 md:-mx-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:px-6 md:py-4">
         <button
           onClick={onBack ?? (() => navigate(backPage))}
           aria-label={language === "pt" ? "Voltar" : language === "es" ? "Volver" : "Back"}
-          className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm transition hover:bg-[#fff0f3] hover:text-[#ff385c]"
+          className="ml-14 flex h-11 w-11 items-center justify-center rounded-lg bg-white shadow-sm transition hover:bg-[#fff0f3] hover:text-[#c91e40] md:ml-0"
         >
           <ArrowLeft size={19} />
         </button>
 
-        <h1 lang="pt-BR" className="min-w-0 truncate text-center text-sm font-bold sm:text-base">{title}</h1>
+        <h1 className="col-span-2 row-start-2 min-w-0 text-center text-sm font-bold sm:text-base md:col-span-1 md:row-start-auto">{title}</h1>
 
         {t && language && setLanguage ? (
-          <LanguageSwitcher language={language} setLanguage={setLanguage} t={t} />
-        ) : (
-          <button className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-sm">
-            <Bell size={18} />
-          </button>
-        )}
+          <div className="justify-self-end"><LanguageSwitcher language={language} setLanguage={setLanguage} t={t} /></div>
+        ) : null}
       </header>
 
       <div className="space-y-4 md:space-y-5">{children}</div>

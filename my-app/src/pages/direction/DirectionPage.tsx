@@ -6,9 +6,10 @@ import type { PageProps } from "../../types";
 import { PageLayout } from "../../components/PageLayout";
 import { Card, IconBox } from "../../components/ui";
 import { hostPhoneNumber } from "../../data/contact";
+import { propertyAddress, propertyMapUrl } from "../../data/property";
 
 export function DirectionPage({ language, setLanguage, t, navigate }: PageProps) {
-  const address = "R. Honoria Virgilina Machado 196 - Real Parque, Sao Jose - SC, 88113-478";
+  const address = propertyAddress;
   const [addressCopied, setAddressCopied] = useState(false);
   const copyAddress = async () => {
     try {
@@ -31,25 +32,25 @@ export function DirectionPage({ language, setLanguage, t, navigate }: PageProps)
       ],
     },
     pt: {
-      title: "Informacoes de estacionamento",
+      title: "Informações de estacionamento",
       description:
-        "Nao ha estacionamento para hospedes dentro da propriedade. Os hospedes devem estacionar na rua perto do apartamento.",
+        "Não há estacionamento para hóspedes dentro da propriedade. Os hóspedes devem estacionar na rua perto do apartamento.",
       instructions: [
-        "Estacione somente em vagas permitidas na rua e evite bloquear portoes, garagens ou entradas.",
-        "Verifique as placas proximas sobre limpeza de rua, horarios restritos ou areas exclusivas para moradores.",
-        "Tranque o veiculo e evite deixar objetos de valor visiveis.",
-        "O bairro e tranquilo, e a maioria dos moradores estaciona na rua sem problemas.",
+        "Estacione somente em vagas permitidas na rua e evite bloquear portões, garagens ou entradas.",
+        "Verifique as placas próximas sobre limpeza de rua, horários restritos ou áreas exclusivas para moradores.",
+        "Tranque o veículo e evite deixar objetos de valor visíveis.",
+        "O bairro é tranquilo, e a maioria dos moradores estaciona na rua sem problemas.",
       ],
     },
     es: {
-      title: "Informacion de estacionamiento",
+      title: "Información de estacionamiento",
       description:
-        "No hay estacionamiento para huespedes dentro de la propiedad. Los huespedes deben usar estacionamiento en la calle cerca del apartamento.",
+        "No hay estacionamiento para huéspedes dentro de la propiedad. Los huéspedes deben usar estacionamiento en la calle cerca del apartamento.",
       instructions: [
         "Estaciona solo en espacios permitidos en la calle y evita bloquear portones, garajes o entradas.",
-        "Revisa las senales cercanas por reglas de limpieza de calle, horarios restringidos o areas solo para residentes.",
-        "Cierra tu vehiculo con llave y evita dejar objetos de valor visibles.",
-        "El barrio es tranquilo, y la mayoria de los residentes estaciona en la calle sin problemas.",
+        "Revisa las señales cercanas por reglas de limpieza de calle, horarios restringidos o areas solo para residentes.",
+        "Cierra tu vehículo con llave y evita dejar objetos de valor visibles.",
+        "El barrio es tranquilo, y la mayoría de los residentes estaciona en la calle sin problemas.",
       ],
     },
   };
@@ -63,7 +64,7 @@ export function DirectionPage({ language, setLanguage, t, navigate }: PageProps)
   ].filter(Boolean);
 
   return (
-    <PageLayout title="Como Chegar" language={language} setLanguage={setLanguage} t={t} navigate={navigate}>
+    <PageLayout title={t.gettingHere} language={language} setLanguage={setLanguage} t={t} navigate={navigate}>
       <img src={images.hero} alt={t.property} className="h-[11.875rem] w-full rounded-lg object-cover sm:h-[205px]" />
 
       <Card>
@@ -75,7 +76,7 @@ export function DirectionPage({ language, setLanguage, t, navigate }: PageProps)
             <h3 className="font-semibold">{t.address}</h3>
             <p className="mt-2 text-sm leading-6 text-gray-600">{address}</p>
           </div>
-          <button onClick={copyAddress} aria-label={addressCopied ? t.copied : t.copy} className="shrink-0 text-gray-400">
+          <button onClick={copyAddress} aria-label={addressCopied ? t.copied : t.copy} className="flex h-11 w-11 shrink-0 items-center justify-center text-gray-600">
             <Copy size={19} />
           </button>
         </div>
@@ -120,26 +121,23 @@ export function DirectionPage({ language, setLanguage, t, navigate }: PageProps)
       </Card>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <button
-          onClick={() =>
-            window.open(
-              `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`,
-              "_blank",
-            )
-          }
-          className="flex min-w-0 items-center justify-center gap-2 rounded-lg bg-[#ff385c] px-3 py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#e92f51]"
+        <a
+          href={propertyMapUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex min-w-0 items-center justify-center gap-2 rounded-lg bg-[#d92148] px-3 py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-[#c91e40]"
         >
           <Navigation size={17} />
           {t.openMaps}
-        </button>
+        </a>
 
-        <button
-          onClick={() => window.location.href = `tel:${hostPhoneNumber.replace(/[^+\d]/g, "")}`}
+        <a
+          href={`tel:${hostPhoneNumber.replace(/[^+\d]/g, "")}`}
           className="flex min-w-0 items-center justify-center gap-2 rounded-lg bg-[#ecf3f2] px-3 py-4 text-sm font-semibold text-[#123c3c] transition hover:bg-[#dcebe8]"
         >
           <Phone size={17} />
           {t.callHost}
-        </button>
+        </a>
       </div>
 
       <section className="space-y-3">

@@ -12,10 +12,10 @@ export default defineConfig({
       includeAssets: ['favicon.png', 'apple-touch-icon.png'],
       manifest: {
         id: '/',
-        name: 'Casa Hospegen',
-        short_name: 'Casa Hospegen',
+        name: 'Hospedaria Real Parque',
+        short_name: 'Hospedaria',
         lang: 'pt-BR',
-        description: 'Your guest guide to Casa Hospegen in Real Parque, Sao Jose.',
+        description: 'Guia do hóspede da Hospedaria Real Parque, São José.',
         start_url: '/',
         scope: '/',
         display: 'standalone',

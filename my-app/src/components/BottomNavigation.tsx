@@ -51,7 +51,7 @@ function BottomItem({
   href?: string;
 }) {
   const className = `flex min-w-0 flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-medium transition ${
-    active ? "text-[#ff385c]" : "text-gray-500"
+    active ? "text-[#c91e40]" : "text-gray-500"
   }`;
 
   if (href) {
@@ -64,7 +64,7 @@ function BottomItem({
   }
 
   return (
-    <button onClick={onClick} className={className}>
+    <button onClick={onClick} aria-current={active ? "page" : undefined} className={className}>
       <div>{icon}</div>
       <span className="max-w-full truncate">{label}</span>
     </button>

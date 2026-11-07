@@ -1,0 +1,159 @@
+import { propertyMapUrl } from "./property"
+import type { Language } from "../types"
+export type Category = 'food' | 'essentials' | 'beaches' | 'sights'
+export type Place = {
+  name: string
+  location: string
+  type: string
+  detail: Record<Language, string>
+  source: string
+  mapUrl?: string
+}
+
+export const places: Record<Category, Place[]> = {
+  food: [
+    {
+      name: 'Tempero da JU',
+      location: 'R. Honório Virgilina Machado, 21 · Real Parque, São José',
+      type: 'Lunch restaurant',
+      detail: {
+        en: 'Lunch restaurant directly opposite the house.',
+        pt: 'Restaurante que serve almoço, bem em frente à casa.',
+        es: 'Restaurante que sirve almuerzo, justo enfrente de la casa.',
+      },
+      source: propertyMapUrl,
+      mapUrl: propertyMapUrl,
+    },
+    {
+      name: 'Cesar Gourmet — Ipiranga',
+      location: 'R. Otto Júlio Malina, 1723 · Ipiranga, São José',
+      type: 'Burgers & snacks',
+      detail: {
+        en: 'Local snack restaurant in Ipiranga, with takeaway available. Check current hours before visiting.',
+        pt: 'Lanchonete no Ipiranga, com opção de retirada. Confira o horário atual antes de visitar.',
+        es: 'Local de comida rápida en Ipiranga, con opción para llevar. Consulta el horario antes de ir.',
+      },
+      source: 'https://es.restaurantguru.com/Cesar-Gourmet-Ipiranga-Sao-Jose',
+    },
+    {
+      name: 'Alemão Lanches e Porções',
+      location: 'R. Joaquim Vieira Padilha, 620 · Real Parque, São José',
+      type: 'Burgers & snacks',
+      detail: {
+        en: 'A local option for burgers and snacks in Real Parque. Confirm the current location and hours before visiting: (48) 3346-7104.',
+        pt: 'Opção de lanches e hambúrgueres no Real Parque. Confirme o endereço e o horário antes de visitar: (48) 3346-7104.',
+        es: 'Opción de hamburguesas y bocadillos en Real Parque. Confirma la dirección y el horario antes de ir: (48) 3346-7104.',
+      },
+      source: 'https://www.tripadvisor.com.br/Restaurant_Review-g2151496-d8215507-Reviews-Alemao_Lanches-Sao_Jose_State_of_Santa_Catarina.html',
+    },
+    { name:'Restaurante Ipiranga', location:'R. Alceu Amoroso Lima, 340 · Real Parque, São José', type:'Brazilian lunch', detail:{en:'Local lunch restaurant with a buffet and grilled dishes.',pt:'Restaurante local para almoço, com buffet e grelhados.',es:'Restaurante local para almorzar, con buffet y platos a la parrilla.'}, source:'https://cardapiosvip.com.br/restaurante/restaurante-ipiranga' },
+    { name:'LaBrava Pizzaria', location:'R. Vereador Pedro Paulo Kremer, 12, sala 04 · Real Parque, São José', type:'Pizza', detail:{en:'Neighborhood pizza for takeaway or delivery.',pt:'Pizza no bairro para retirada ou entrega.',es:'Pizza del barrio para llevar o pedir a domicilio.'}, source:'https://wepede.com.br/r/labrava-pizzaria-vgtt4/' },
+    { name:'Pastelaria Valéria Caldo de Cana', location:'R. Franklin Cascaes · Real Parque, São José', type:'Pastel & sugarcane juice', detail:{en:'A neighborhood stop for pastel and sugarcane juice.',pt:'Pastel e caldo de cana no bairro.',es:'Pastel brasileño y jugo de caña en el barrio.'}, source:'https://www.locaisdobrasil.com.br/encontre/restaurantes/real-parque/sao-jose-sc' },
+    { name:'Padaria e Confeitaria Santo Antônio', location:'Real Parque / Ipiranga · São José', type:'Bakery & coffee', detail:{en:'Bread, coffee and breakfast essentials. Check its current map listing for the entrance.',pt:'Pães, café e itens para o café da manhã. Confira a entrada no mapa.',es:'Pan, café y productos para desayunar. Comprueba la entrada en el mapa.'}, source:'https://maps.app.goo.gl/DhcvXVjBsW4HYSkt6' },
+    { name:'Restaurante Sabor de Casa', location:'R. Otto Júlio Malina, 808 · Ipiranga, São José', type:'Casual meals', detail:{en:'Simple local meals in the neighboring Ipiranga area.',pt:'Refeições simples no bairro vizinho Ipiranga.',es:'Comidas sencillas en el barrio vecino de Ipiranga.'}, source:'https://www.guiatelefone.com/empresas/sao-jose-sc/bairro/ipiranga/lanches-e-salgados/lanchonetes' },
+  ],
+  essentials: [
+    {
+      name: 'Mercado Tibes 24hs',
+      location: 'Servidão Olaires Maria dos Santos, s/n · São José · CEP 88111-685',
+      type: 'Neighborhood market',
+      detail: {
+        en: 'Neighborhood market for everyday essentials. Listed as “24hs”, but published hours conflict. Confirm before a late-night visit: (48) 98442-2528.',
+        pt: 'Mercado de bairro para compras do dia a dia. Anunciado como “24hs”, mas os horários publicados divergem. Confirme antes de ir à noite: (48) 98442-2528.',
+        es: 'Mercado de barrio para compras diarias. Figura como “24hs”, pero los horarios publicados no coinciden. Confirma antes de ir de noche: (48) 98442-2528.',
+      },
+      source: 'https://restaurantguru.com.br/Mercado-Tibes-24hs-Sao-Jose',
+    },
+    {
+      name: 'Mercado Costa',
+      location: 'R. Jos\u00e9 Ant\u00f4nio Pereira, 1144 \u00b7 Ipiranga, S\u00e3o Jos\u00e9',
+      type: 'Neighborhood market',
+      detail: {
+        en: 'A nearby grocery market for everyday essentials.',
+        pt: 'Mercado pr\u00f3ximo para compras do dia a dia.',
+        es: 'Mercado cercano para las compras diarias.',
+      },
+      source: 'https://www.lojalocal.com/12860108000133',
+    },
+    {
+      name: 'Mercado Ipiranga',
+      location: 'R. Jo\u00e3o Paulo Gaspar, 2565 \u00b7 Ipiranga, S\u00e3o Jos\u00e9',
+      type: 'Neighborhood market',
+      detail: {
+        en: 'Another local grocery option in the neighboring Ipiranga area.',
+        pt: 'Outra op\u00e7\u00e3o de mercado no bairro vizinho Ipiranga.',
+        es: 'Otra opci\u00f3n de mercado en el barrio vecino de Ipiranga.',
+      },
+      source: 'https://br.todosnegocios.com/pt/mercado-ipiranga_3t-48-3258-3967',
+    },
+    {
+      name: 'Kompr\u00e3o Koch Atacadista',
+      location: 'R. Franklin Cascaes, 2360 \u00b7 Real Parque, S\u00e3o Jos\u00e9',
+      type: 'Wholesale supermarket',
+      detail: {
+        en: 'Larger grocery and household shopping in Real Parque.',
+        pt: 'Atacarejo para compras de alimentos e itens para a casa no Real Parque.',
+        es: 'Supermercado mayorista para alimentos y productos del hogar en Real Parque.',
+      },
+      source: 'https://komprao.com.br/lojas/',
+    },
+    {
+      name: 'Farm\u00e1cia Farma + Popular',
+      location: 'R. Franklin Cascaes, 170, sala 02 \u00b7 Real Parque, S\u00e3o Jos\u00e9',
+      type: 'Pharmacy',
+      detail: {
+        en: 'Local pharmacy for medicines and personal care items.',
+        pt: 'Farm\u00e1cia local para medicamentos e itens de higiene.',
+        es: 'Farmacia local para medicamentos y art\u00edculos de higiene.',
+      },
+      source: 'https://www.solutudo.com.br/empresas/sc/s-jose/farmacias/farmacia-moreira-e-silva-ltda-24140938',
+    },
+    {
+      name: 'Farm\u00e1cia S\u00e3o Carlos',
+      location: 'R. M\u00e1rio C\u00e9sar da Costa, 2421 \u00b7 Real Parque, S\u00e3o Jos\u00e9',
+      type: 'Pharmacy',
+      detail: {
+        en: 'Another pharmacy option in the neighborhood.',
+        pt: 'Outra op\u00e7\u00e3o de farm\u00e1cia no bairro.',
+        es: 'Otra farmacia en el barrio.',
+      },
+      source: 'https://applocal.com.br/empresa/farmacia-sao-carlos/sao-jose/sc/9278252',
+    },
+  ],
+  beaches: [
+    { name:'Praia da Guararema', location:'Ponta de Baixo · São José', type:'São José', detail:{en:'The city’s small bay beach with a deck and waterfront restaurants. Check water quality before swimming.',pt:'Praia da cidade, com deck e restaurantes à beira-mar. Confira a balneabilidade antes do banho.',es:'Playa de la ciudad con paseo y restaurantes. Consulta la calidad del agua antes de bañarte.'}, source:'https://saojose.sc.gov.br/praia-da-guararema-em-ponta-de-baixo-e-considerada-propria-para-banho/76033/' },
+    { name:'Praia do Forte', location:'Norte da Ilha · Florianópolis', type:'Beach + history', detail:{en:'A beach beside the São José da Ponta Grossa fortress.',pt:'Praia ao lado da Fortaleza de São José da Ponta Grossa.',es:'Playa junto a la Fortaleza de São José da Ponta Grossa.'}, source:'https://fortalezas.ufsc.br/fortaleza-ponta-grossa/guia-fortaleza-de-sao-jose-da-ponta-grossa/' },
+    { name:'Praia da Daniela', location:'Norte da Ilha · Florianópolis', type:'Sheltered coast', detail:{en:'A north-island beach often chosen by families.',pt:'Praia do norte da ilha procurada por famílias.',es:'Playa del norte de la isla popular entre familias.'}, source:'https://www.setur.sc.gov.br/verao-em-santa-catarina-descubra-melhores-praias-para-aproveitar-com-a-familia/' },
+    { name:'Praia de Jurerê', location:'Norte da Ilha · Florianópolis', type:'North island', detail:{en:'A north-island beach with places to eat nearby.',pt:'Praia do norte da ilha com opções de alimentação por perto.',es:'Playa del norte de la isla con opciones para comer cerca.'}, source:'https://balneabilidade.ima.sc.gov.br/' },
+    { name:'Praia de Canasvieiras', location:'Norte da Ilha · Florianópolis', type:'Beach town', detail:{en:'A lively beach area with shops and places to eat.',pt:'Balneário movimentado com comércio e restaurantes.',es:'Zona de playa animada con tiendas y restaurantes.'}, source:'https://balneabilidade.ima.sc.gov.br/' },
+    { name:'Praia de Ponta das Canas', location:'Norte da Ilha · Florianópolis', type:'North island', detail:{en:'Another north-island beach to explore.',pt:'Mais uma praia para conhecer no norte da ilha.',es:'Otra playa para conocer en el norte de la isla.'}, source:'https://balneabilidade.ima.sc.gov.br/' },
+    { name:'Praia da Barra da Lagoa', location:'Leste da Ilha · Florianópolis', type:'East coast', detail:{en:'An east-island beach near the Barra da Lagoa neighborhood.',pt:'Praia do leste da ilha junto ao bairro Barra da Lagoa.',es:'Playa del este de la isla junto al barrio Barra da Lagoa.'}, source:'https://balneabilidade.ima.sc.gov.br/' },
+    { name:'Praia da Joaquina', location:'Leste da Ilha · Florianópolis', type:'Surf & dunes', detail:{en:'An open-coast beach known for its waves and nearby dunes.',pt:'Praia de mar aberto conhecida pelas ondas e dunas próximas.',es:'Playa de mar abierto conocida por sus olas y dunas cercanas.'}, source:'https://balneabilidade.ima.sc.gov.br/' },
+    { name:'Praia do Campeche', location:'Sul da Ilha · Florianópolis', type:'Open coast', detail:{en:'A long south-island beach with ocean views.',pt:'Praia extensa no sul da ilha, com vista para o mar aberto.',es:'Playa extensa en el sur de la isla, frente al mar abierto.'}, source:'https://balneabilidade.ima.sc.gov.br/' },
+    { name:'Praia da Armação', location:'Sul da Ilha · Florianópolis', type:'South island', detail:{en:'A south-island beach and village for a longer outing.',pt:'Praia e vila no sul da ilha para um passeio mais longo.',es:'Playa y pueblo del sur de la isla para una excursión más larga.'}, source:'https://balneabilidade.ima.sc.gov.br/' },
+    { name:'Praia da Pinheira', location:'Pinheira · Palhoça', type:'South coast', detail:{en:'A beach trip south of São José, in Palhoça.',pt:'Passeio de praia ao sul de São José, em Palhoça.',es:'Excursión de playa al sur de São José, en Palhoça.'}, source:'https://www.setur.sc.gov.br/verao-em-santa-catarina-descubra-melhores-praias-para-aproveitar-com-a-familia/' },
+    { name:'Guarda do Embaú', location:'Guarda do Embaú · Palhoça', type:'Beach & nature', detail:{en:'A scenic Palhoça beach and village for a longer outing.',pt:'Praia e vila de Palhoça para um passeio mais longo.',es:'Playa y pueblo de Palhoça para una excursión más larga.'}, source:'https://www.setur.sc.gov.br/verao-em-santa-catarina-descubra-melhores-praias-para-aproveitar-com-a-familia/' },
+  ],
+  sights: [
+    {
+      name: 'Praça do CEU — Centro de Artes e Esportes Unificados',
+      location: 'R. Eduardo Mikulki, 124, esquina com R. José Antônio Pereira · Ipiranga, São José',
+      type: 'Arts, sports & recreation',
+      detail: {
+        en: 'Community arts and sports space with a playground, skate park, walking track, library and amphitheatre. Check the current activity schedule before visiting.',
+        pt: 'Espaço de artes, esportes e convivência com playground, pista de skate, pista de caminhada, biblioteca e anfiteatro. Confira a programação atual antes de visitar.',
+        es: 'Espacio comunitario de arte y deporte con parque infantil, pista de skate, sendero para caminar, biblioteca y anfiteatro. Consulta la programación antes de ir.',
+      },
+      source: 'https://saojose.sc.gov.br/praca-do-ceu-projeta-ampliacao-de-atividades-em-2026-com-foco-no-projeto-mulheres-ativas/94876/',
+    },
+    { name:'Parque Beira Mar', location:'Beira-Mar · São José', type:'Waterfront park', detail:{en:'Seafront walks, playground and skate area beside the Arena Multiuso.',pt:'Passeio à beira-mar, playground e pista de skate ao lado da Arena Multiuso.',es:'Paseo marítimo, parque infantil y pista de skate junto a la Arena Multiuso.'}, source:'https://saojose.sc.gov.br/parque-beira-mar-sao-jose/38615/' },
+    { name:'Centro Histórico de São José', location:'Centro Histórico · São José', type:'History & architecture', detail:{en:'Colorful historic buildings, Praça Hercílio Luz, the church and local museums.',pt:'Casario histórico, Praça Hercílio Luz, Igreja Matriz e museus.',es:'Casas históricas, Praça Hercílio Luz, iglesia y museos.'}, source:'https://saojose.sc.gov.br/centro-historico-turismo/38616/' },
+    { name:'Theatro Adolpho Mello', location:'Praça Hercílio Luz · Centro Histórico, São José', type:'Historic theatre', detail:{en:'A landmark theatre in the historic center; check visiting arrangements first.',pt:'Teatro histórico no centro; confira as condições de visita antes de ir.',es:'Teatro histórico en el centro; consulta las visitas antes de ir.'}, source:'https://saojose.sc.gov.br/servico-theatro-adolpho-mello/' },
+    { name:'Bica da Carioca', location:'Centro Histórico · São José', type:'Historic landmark', detail:{en:'A restored nineteenth-century water source near the main church.',pt:'Antiga fonte de água do século XIX, perto da Igreja Matriz.',es:'Antigua fuente de agua del siglo XIX cerca de la iglesia principal.'}, source:'https://saojose.sc.gov.br/pontos-turisticos/' },
+    { name:'Jardim Botânico Max Hablitzel', location:'R. Cauassú, s/n · Potecas, São José', type:'Garden & nature', detail:{en:'Botanical garden with trails, a sensory garden and native plants.',pt:'Jardim botânico com trilhas, jardim sensorial e plantas nativas.',es:'Jardín botánico con senderos, jardín sensorial y plantas nativas.'}, source:'https://saojose.sc.gov.br/jardim-botanico/' },
+    { name:'Ponte Hercílio Luz & Parque da Luz', location:'Centro · Florianópolis', type:'City landmark', detail:{en:'Walk by Florianópolis’s iconic bridge and the adjoining park.',pt:'Passeie pela ponte símbolo de Florianópolis e pelo parque ao lado.',es:'Pasea por el puente emblemático de Florianópolis y el parque contiguo.'}, source:'https://visitefloripa.com.br/os-9-lugares-preferidos-do-meu-pai-em-floripa/' },
+    { name:'Mercado Público de Florianópolis', location:'Centro · Florianópolis', type:'Food & culture', detail:{en:'Historic market for local food and a look around the city center.',pt:'Mercado histórico para provar a gastronomia local e conhecer o centro.',es:'Mercado histórico para probar comida local y recorrer el centro.'}, source:'https://visitefloripa.com.br/o-que-ver/mercado-publico/' },
+    { name:'Fortaleza de São José da Ponta Grossa', location:'Praia do Forte · Florianópolis', type:'Fortress & views', detail:{en:'An eighteenth-century coastal fortress open to visitors; check admission details.',pt:'Fortaleza costeira do século XVIII aberta à visitação; confira ingressos.',es:'Fortaleza costera del siglo XVIII abierta a visitas; consulta las entradas.'}, source:'https://fortalezas.ufsc.br/fortaleza-ponta-grossa/guia-fortaleza-de-sao-jose-da-ponta-grossa/' },
+  ],
+}
+

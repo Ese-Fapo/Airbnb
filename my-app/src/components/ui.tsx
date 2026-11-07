@@ -33,7 +33,7 @@ export function QuickAction({
       onClick={onClick}
       className="group flex min-h-[5.625rem] min-w-0 flex-col items-center justify-center rounded-lg px-2 py-3 transition hover:-translate-y-0.5 hover:bg-[#fff0f3] active:scale-95 md:min-h-[6.25rem]"
     >
-      <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-[#fff0f3] text-[#ff385c] shadow-sm ring-1 ring-[#ffd4dc] transition group-hover:bg-[#ff385c] group-hover:text-white">
+      <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-lg bg-[#fff0f3] text-[#c91e40] shadow-sm ring-1 ring-[#ffd4dc] transition group-hover:bg-[#d92148] group-hover:text-white">
         {icon}
       </div>
       <span className="text-center text-[12px] font-bold leading-4 text-[#17201c]">{title}</span>
@@ -60,7 +60,7 @@ export function PropertyCard({
       <div className="relative">
         <img src={image} alt={title} className="h-[9.375rem] w-full object-cover" />
         {onClick && (
-          <div className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 text-[#ff385c] shadow-sm backdrop-blur">
+          <div className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 text-[#c91e40] shadow-sm backdrop-blur">
             <Images size={18} />
           </div>
         )}
@@ -112,7 +112,7 @@ export function GuideRow({
         <h3 className="text-sm font-semibold">{title}</h3>
         <p className="mt-1 text-xs text-gray-500">{description}</p>
       </div>
-      <ChevronRight size={18} className="text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-[#ff385c]" />
+      <ChevronRight size={18} className="text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-[#c91e40]" />
     </button>
   );
 }
@@ -128,7 +128,7 @@ export function RuleRow({
 }) {
   return (
     <div className="flex min-w-0 items-center gap-3 rounded-lg border border-[#e5e7df] bg-white p-4 shadow-sm transition hover:border-[#ffd0d9] sm:gap-4 md:p-5">
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#fff0f3] text-[#ff385c]">
+      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#fff0f3] text-[#c91e40]">
         {icon}
       </div>
       <div className="min-w-0">
@@ -160,7 +160,7 @@ export function NearbyRow({
         <h3 className="text-sm font-semibold">{title}</h3>
         <p className="mt-1 text-xs text-gray-500">{description}</p>
       </div>
-      <ArrowRight size={17} className="text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-[#ff385c]" />
+      <ArrowRight size={17} className="text-gray-400 transition group-hover:translate-x-0.5 group-hover:text-[#c91e40]" />
     </button>
   );
 }
@@ -168,7 +168,7 @@ export function NearbyRow({
 export function CheckRow({ text }: { text: string }) {
   return (
     <div className="flex min-w-0 items-center gap-3 rounded-lg border border-[#e5e7df] bg-white p-4 shadow-sm md:p-5">
-      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#fff0f3] text-[#ff385c]">
+      <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#fff0f3] text-[#c91e40]">
         <Check size={16} strokeWidth={3} />
       </div>
       <span className="min-w-0 text-sm leading-5">{text}</span>

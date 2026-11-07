@@ -21,6 +21,7 @@ import {
   Recycle,
   ShieldAlert,
   Sparkles,
+  Video,
   Wifi,
   X,
 } from "lucide-react";
@@ -29,9 +30,12 @@ import { BottomNavigation } from "./components/BottomNavigation";
 import { InstallPrompt } from "./components/InstallPrompt";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { MobileMenu } from "./components/MobileMenu";
+import { Modal } from "./components/Modal";
 import { PageLayout } from "./components/PageLayout";
 import { Card, GuideRow, PropertyCard, QuickAction } from "./components/ui";
 import { images, propertyPhotos } from "./data/images";
+import { checkInVideoSrc } from "./data/checkIn";
+import { pageFromHash } from "./data/navigation";
 import { CheckoutPage } from "./pages/checkout/CheckoutPage";
 import { ContactButton } from "./pages/contact/ContactButton";
 import { DirectionPage } from "./pages/direction/DirectionPage";
@@ -42,11 +46,14 @@ import type { Language, Page, PageProps } from "./types";
 const translations: Record<Language, Record<string, string>> = {
   en: {
     language: "Language",
+    close: "Close",
+    previousPhoto: "Previous photo",
+    nextPhoto: "Next photo",
     contactHost: "Contact host",
     guestGuide: "Guest guide",
     welcomeTo: "Welcome to",
     heroTitleLine1: "Real Parque",
-    heroTitleLine2: "Guest Home",
+    heroTitleLine2: "Guesthouse",
     heroDescription:
       "Arrival details, house essentials, WiFi, checkout steps, and local favorites in one simple place.",
     fastCheckIn: "Fast check-in",
@@ -65,8 +72,8 @@ const translations: Record<Language, Record<string, string>> = {
     beforeLeaving: "Before leaving",
     yourStay: "Your stay",
     makeHome: "Make yourself at home",
-    livingRoom: "Room 1",
-    bedroom: "Bedroom",
+    livingRoom: "Twin bedroom",
+    bedroom: "Queen bedroom",
     creatorCredit: "site created by S.P",
     creatorMessage: "Like this guest guide? I build professional websites for businesses at Sites Profissionai.",
     creatorCta: "Build my website",
@@ -80,11 +87,11 @@ const translations: Record<Language, Record<string, string>> = {
     openMaps: "Open in Maps",
     callHost: "Call Host",
     yourHome: "Your Home",
-    livingRoomAlt: "Room 1",
+    livingRoomAlt: "Bedroom with two single beds",
     beforeArrive: "Before You Arrive",
     allNeed: "All you need to know",
     checkInInstructions: "Check-in Instructions",
-    selfCheckIn: "Easy self check-in steps",
+    selfCheckIn: "Key handover & late arrivals",
     included: "What's included",
     howThingsWork: "How Things Work",
     devices: "Devices & appliances",
@@ -135,11 +142,11 @@ const translations: Record<Language, Record<string, string>> = {
     groceries: "Groceries",
     supermarkets: "Supermarkets nearby",
     checkoutTime: "Check-out Time",
-    pleaseLeave: "Please Before You Leave",
+    pleaseLeave: "Before You Leave",
     lockDoors: "Lock all doors and windows",
     lightsAc: "Turn off lights and ceiling fans",
     trashOut: "Take out the trash",
-    keysLockbox: "Leave the keys in the lockbox",
+    keysLockbox: "Leave the keys in the lockbox or on the yellow mailbox at the gate",
     thankStay: "Thank you for staying with us",
     wonderfulVisit: "We hope you had a wonderful visit.",
     home: "Home",
@@ -149,11 +156,14 @@ const translations: Record<Language, Record<string, string>> = {
   },
   pt: {
     language: "Idioma",
+    close: "Fechar",
+    previousPhoto: "Foto anterior",
+    nextPhoto: "Próxima foto",
     contactHost: "Falar com anfitrião",
     guestGuide: "Guia do hóspede",
     welcomeTo: "Bem-vindo a",
     heroTitleLine1: "Real Parque",
-    heroTitleLine2: "Casa de Hóspedes",
+    heroTitleLine2: "Hospedaria",
     heroDescription:
       "Detalhes de chegada, itens essenciais da casa, WiFi, saída e favoritos locais em um só lugar.",
     fastCheckIn: "Check-in rápido",
@@ -190,7 +200,7 @@ const translations: Record<Language, Record<string, string>> = {
     beforeArrive: "Antes de Chegar",
     allNeed: "Tudo que você precisa saber",
     checkInInstructions: "Instruções de Check-in",
-    selfCheckIn: "Passos simples para self check-in",
+    selfCheckIn: "Entrega das chaves e chegada tardia",
     included: "O que está incluído",
     howThingsWork: "Como Tudo Funciona",
     devices: "Aparelhos e equipamentos",
@@ -245,7 +255,7 @@ const translations: Record<Language, Record<string, string>> = {
     lockDoors: "Tranque todas as portas e janelas",
     lightsAc: "Desligue as luzes e os ventiladores de teto",
     trashOut: "Leve o lixo para fora",
-    keysLockbox: "Deixe as chaves no cofre",
+    keysLockbox: "Deixe as chaves no cofre ou sobre a caixa de correio amarela no portão",
     thankStay: "Obrigado por se hospedar conosco",
     wonderfulVisit: "Esperamos que tenha tido uma ótima visita.",
     home: "Início",
@@ -255,6 +265,9 @@ const translations: Record<Language, Record<string, string>> = {
   },
   es: {
     language: "Idioma",
+    close: "Cerrar",
+    previousPhoto: "Foto anterior",
+    nextPhoto: "Foto siguiente",
     contactHost: "Contactar anfitrión",
     guestGuide: "Guía del huésped",
     welcomeTo: "Bienvenido a",
@@ -278,9 +291,9 @@ const translations: Record<Language, Record<string, string>> = {
     beforeLeaving: "Antes de salir",
     yourStay: "Tu estadía",
     makeHome: "Siéntete como en casa",
-    livingRoom: "Dormitorio",
-    bedroom: "Dormitorio",
-    creatorCredit: "Creado por Ese Victor",
+    livingRoom: "Habitación con dos camas",
+    bedroom: "Habitación con cama queen",
+    creatorCredit: "Sitio creado por S.P",
     creatorMessage: "Te gusta esta gu\u00eda? Creo sitios web profesionales para empresas en Sites Profissionai.",
     creatorCta: "Quiero mi sitio web",
     property: "Propiedad",
@@ -296,7 +309,7 @@ const translations: Record<Language, Record<string, string>> = {
     beforeArrive: "Antes de Llegar",
     allNeed: "Todo lo que necesitas saber",
     checkInInstructions: "Instrucciones de Check-in",
-    selfCheckIn: "Pasos simples de self check-in",
+    selfCheckIn: "Entrega de llaves y llegadas tardías",
     included: "Qué está incluido",
     howThingsWork: "Cómo Funciona Todo",
     devices: "Dispositivos y electrodomésticos",
@@ -351,7 +364,7 @@ const translations: Record<Language, Record<string, string>> = {
     lockDoors: "Cierra todas las puertas y ventanas",
     lightsAc: "Apaga las luces y los ventiladores de techo",
     trashOut: "Saca la basura",
-    keysLockbox: "Deja las llaves en la caja de seguridad",
+    keysLockbox: "Deja las llaves en la caja de seguridad o sobre el buzón amarillo en la entrada",
     thankStay: "Gracias por hospedarte con nosotros",
     wonderfulVisit: "Esperamos que hayas tenido una visita maravillosa.",
     home: "Inicio",
@@ -362,10 +375,12 @@ const translations: Record<Language, Record<string, string>> = {
 };
 
 function getDefaultLanguage(): Language {
-  const storedLanguage = window.localStorage.getItem("guest-guide-language");
-  if (storedLanguage === "en" || storedLanguage === "pt" || storedLanguage === "es") {
-    return storedLanguage;
-  }
+  try {
+    const storedLanguage = window.localStorage.getItem("guest-guide-language");
+    if (storedLanguage === "en" || storedLanguage === "pt" || storedLanguage === "es") {
+      return storedLanguage;
+    }
+  } catch { /* Keep the app usable when browser storage is unavailable. */ }
 
   const preferredLanguages = window.navigator.languages?.length
     ? window.navigator.languages
@@ -378,28 +393,44 @@ function getDefaultLanguage(): Language {
 }
 
 function App() {
-  const [page, setPage] = useState<Page>("home");
+  const [page, setPage] = useState<Page>(() => pageFromHash(window.location.hash));
   const [menuOpen, setMenuOpen] = useState(false);
   const [language, setLanguage] = useState<Language>(getDefaultLanguage);
   const t = translations[language];
 
   useEffect(() => {
     document.documentElement.lang = language === "pt" ? "pt-BR" : language;
+    document.title = language === "pt" ? "Hospedaria Real Parque — Guia do Hóspede" : language === "es" ? "Casa de Huéspedes Real Parque — Guía del huésped" : "Real Parque Guesthouse — Guest guide";
   }, [language]);
+
+  useEffect(() => {
+    const handleHistory = () => {
+      setPage(pageFromHash(window.location.hash));
+      setMenuOpen(false);
+    };
+    window.addEventListener("popstate", handleHistory);
+    window.addEventListener("hashchange", handleHistory);
+    return () => {
+      window.removeEventListener("popstate", handleHistory);
+      window.removeEventListener("hashchange", handleHistory);
+    };
+  }, []);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+    document.getElementById("main-content")?.focus({ preventScroll: true });
+  }, [page]);
 
   const changeLanguage = (newLanguage: Language) => {
     setLanguage(newLanguage);
-    window.localStorage.setItem("guest-guide-language", newLanguage);
+    try { window.localStorage.setItem("guest-guide-language", newLanguage); }
+    catch { /* The selected language still works for this visit. */ }
   };
 
   const navigate = (newPage: Page) => {
     setPage(newPage);
     setMenuOpen(false);
-
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    if (page !== newPage) window.history.pushState(null, "", `#${newPage}`);
   };
 
   return (
@@ -503,10 +534,13 @@ function App() {
       <button
         onClick={() => setMenuOpen(true)}
         aria-label={language === "pt" ? "Abrir menu" : language === "es" ? "Abrir menú" : "Open menu"}
+        aria-expanded={menuOpen}
+        aria-controls={menuOpen ? "guest-menu" : undefined}
+        aria-haspopup="dialog"
         className="
           fixed
-          bottom-24
-          left-5
+          top-4
+          left-4
           z-40
           flex
           h-12
@@ -514,7 +548,7 @@ function App() {
           items-center
           justify-center
           rounded-lg
-          bg-[#ff385c]
+          bg-[#d92148]
           text-white
           shadow-xl
           transition
@@ -555,7 +589,7 @@ function HomePage({
   }[language];
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-6xl bg-[#f7f7f2] shadow-2xl md:my-4 md:overflow-hidden md:rounded-2xl">
+    <main id="main-content" tabIndex={-1} className="mx-auto min-h-screen w-full max-w-6xl bg-[#f7f7f2] shadow-2xl md:my-4 md:overflow-hidden md:rounded-2xl">
 
       {/* HERO */}
 
@@ -570,7 +604,7 @@ function HomePage({
         <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(12,18,17,0.76),rgba(12,18,17,0.18)_48%,rgba(255,56,92,0.24))]" />
         <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-[#101816]/75 to-transparent" />
 
-        <div className="relative z-10 flex min-h-[100svh] flex-col justify-between p-4 sm:p-5 md:min-h-[45rem]">
+        <div className="relative z-10 flex min-h-[100svh] flex-col justify-between p-4 pb-28 sm:p-5 sm:pb-28 md:min-h-[45rem] md:pb-6">
 
           {/* TOP */}
 
@@ -589,17 +623,16 @@ function HomePage({
 
           <div className="pb-1 text-white">
 
-            <div lang="pt-BR" className="mb-3 inline-flex w-fit items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.18em] text-white/90 backdrop-blur-md">
+            <div className="mb-3 inline-flex w-fit items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.18em] text-white/90 backdrop-blur-md">
               <Sparkles size={13} />
-              {translations.pt.guestGuide}
+              {t.guestGuide}
             </div>
 
-            <p lang="pt-BR" className="mb-1 text-[15px] font-semibold uppercase tracking-[0.18em] text-[#ffd6de]">
-              {translations.pt.welcomeTo}
+            <p className="mb-1 text-[15px] font-semibold uppercase tracking-[0.18em] text-[#ffd6de]">
+              {t.welcomeTo}
             </p>
 
             <h1
-              lang="pt-BR"
               className="
                 max-w-[560px]
                 text-[38px]
@@ -610,9 +643,9 @@ function HomePage({
                 lg:text-[68px]
               "
             >
-              {translations.pt.heroTitleLine1}
+              {t.heroTitleLine1}
               <br />
-              {translations.pt.heroTitleLine2}
+              {t.heroTitleLine2}
             </h1>
 
             <p className="mt-5 max-w-[440px] text-[16px] leading-6 text-white/90 md:text-[17px]">
@@ -670,10 +703,10 @@ function HomePage({
               />
 
               <QuickAction
-                icon={<Wifi />}
-                title={t.wifi}
-                description={t.network}
-                onClick={() => navigate("wifi")}
+                icon={<KeyRound />}
+                title="Check-in"
+                description={t.selfCheckIn}
+                onClick={() => navigate("check-in")}
               />
 
               <QuickAction
@@ -713,7 +746,7 @@ function HomePage({
           </div>
 
           <Sparkles
-              className="text-[#ff385c]"
+              className="text-[#c91e40]"
             size={23}
           />
 
@@ -740,7 +773,7 @@ function HomePage({
         <div className="mt-5">
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-base font-bold">{language === "pt" ? "Mais espaços da casa" : language === "es" ? "Más espacios de la casa" : "More of the home"}</h3>
-            <button onClick={() => navigate("photos")} className="text-xs font-semibold text-[#ff385c]">{photoActionLabel}</button>
+            <button onClick={() => navigate("photos")} className="text-xs font-semibold text-[#c91e40]">{photoActionLabel}</button>
           </div>
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             {[
@@ -806,7 +839,7 @@ function HomePage({
             href="https://sitesprofissionai.com/"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#ff385c] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#e42e50]"
+            className="mt-4 inline-flex items-center gap-2 rounded-lg bg-[#d92148] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#c91e40]"
           >
             {t.creatorCta}
             <ExternalLink size={15} />
@@ -827,16 +860,6 @@ function PhotoGalleryPage({
   navigate,
 }: PageProps) {
   const [selectedPhoto, setSelectedPhoto] = useState<number | null>(null);
-  useEffect(() => {
-    if (selectedPhoto === null) return;
-    const handleKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setSelectedPhoto(null);
-      if (event.key === "ArrowLeft") setSelectedPhoto((current) => current === null ? null : (current - 1 + propertyPhotos.length) % propertyPhotos.length);
-      if (event.key === "ArrowRight") setSelectedPhoto((current) => current === null ? null : (current + 1) % propertyPhotos.length);
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [selectedPhoto]);
   const groups = [
     { key: "arrival", label: { en: "Arrival & entrance", pt: "Chegada e entrada", es: "Llegada y entrada" } },
     { key: "bedrooms", label: { en: "Bedrooms", pt: "Quartos", es: "Dormitorios" } },
@@ -851,7 +874,7 @@ function PhotoGalleryPage({
 
   return (
     <PageLayout
-      title="Galeria de fotos"
+      title={copy.title}
       language={language}
       setLanguage={setLanguage}
       t={t}
@@ -892,13 +915,18 @@ function PhotoGalleryPage({
         </section>
       ))}
       {selectedPhoto !== null && (
-        <div role="dialog" aria-modal="true" aria-label={propertyPhotos[selectedPhoto].title[language]} className="fixed inset-0 z-50 flex items-center justify-center bg-[#101816]/95 p-4">
-          <button onClick={() => setSelectedPhoto(null)} aria-label="Close" className="absolute right-4 top-4 rounded-lg bg-white/15 p-3 text-white"><X size={22} /></button>
-          <button onClick={() => setSelectedPhoto((selectedPhoto - 1 + propertyPhotos.length) % propertyPhotos.length)} aria-label="Previous photo" className="absolute left-2 top-1/2 rounded-lg bg-white/15 p-2 text-white sm:left-6"><ChevronLeft size={25} /></button>
+        <Modal label={propertyPhotos[selectedPhoto].title[language]} onClose={() => setSelectedPhoto(null)}>
+          <div className="flex h-full items-center justify-center bg-[#101816]/95 p-4" onKeyDown={(event) => {
+            if (event.key === "ArrowLeft") { event.preventDefault(); setSelectedPhoto((selectedPhoto - 1 + propertyPhotos.length) % propertyPhotos.length); }
+            if (event.key === "ArrowRight") { event.preventDefault(); setSelectedPhoto((selectedPhoto + 1) % propertyPhotos.length); }
+          }}>
+          <button onClick={() => setSelectedPhoto(null)} aria-label={t.close} className="absolute right-4 top-4 rounded-lg bg-white/15 p-3 text-white"><X size={22} /></button>
+          <button onClick={() => setSelectedPhoto((selectedPhoto - 1 + propertyPhotos.length) % propertyPhotos.length)} aria-label={t.previousPhoto} className="absolute left-2 top-1/2 rounded-lg bg-white/15 p-3 text-white sm:left-6"><ChevronLeft size={25} /></button>
           <img src={propertyPhotos[selectedPhoto].src} alt={propertyPhotos[selectedPhoto].title[language]} className="max-h-[78svh] max-w-[88vw] object-contain" />
-          <button onClick={() => setSelectedPhoto((selectedPhoto + 1) % propertyPhotos.length)} aria-label="Next photo" className="absolute right-2 top-1/2 rounded-lg bg-white/15 p-2 text-white sm:right-6"><ChevronRight size={25} /></button>
+          <button onClick={() => setSelectedPhoto((selectedPhoto + 1) % propertyPhotos.length)} aria-label={t.nextPhoto} className="absolute right-2 top-1/2 rounded-lg bg-white/15 p-3 text-white sm:right-6"><ChevronRight size={25} /></button>
           <p className="absolute bottom-5 left-4 right-4 text-center text-sm font-semibold text-white">{selectedPhoto + 1} / {propertyPhotos.length} · {propertyPhotos[selectedPhoto].title[language]}</p>
-        </div>
+          </div>
+        </Modal>
       )}
     </PageLayout>
   );
@@ -920,7 +948,7 @@ function HouseGuide({
 }: PageProps) {
   return (
     <PageLayout
-        title={translations.pt.houseGuide}
+        title={t.houseGuide}
         language={language}
         setLanguage={setLanguage}
         t={t}
@@ -946,6 +974,13 @@ function HouseGuide({
           title={t.checkInInstructions}
           description={t.selfCheckIn}
           onClick={() => navigate("check-in")}
+        />
+
+        <GuideRow
+          icon={<Wifi />}
+          title={t.wifi}
+          description={t.network}
+          onClick={() => navigate("wifi")}
         />
 
         <GuideRow
@@ -1004,7 +1039,7 @@ const guideDetails = {
     image: images.hero,
     icon: <KeyRound />,
     summary:
-      "Welcome to your cozy private apartment in Real Parque, one of the city's most charming and well-located neighborhoods. Keep these details handy so check-in is calm and quick.",
+      "Welcome to Real Parque Guesthouse, with a cozy private apartment in one of the city's most charming and well-located neighborhoods. Keep these details handy so check-in is calm and quick.",
     sections: [
       {
         title: "Before you leave",
@@ -1045,31 +1080,27 @@ const guideDetails = {
   },
   "check-in": {
     titleKey: "checkInInstructions",
-    eyebrow: "Self check-in",
+    eyebrow: "Simple check-in",
     image: images.entrance,
     icon: <DoorOpen />,
     summary:
-      "Use these steps when you arrive. The process is designed to be simple, private, and easy to follow.",
+      "Check-in is simple. Choose the option below that matches your arrival time.",
     sections: [
       {
-        title: "At the property",
+        title: "1. Arriving before 10 PM",
         items: [
-          "Go to the private entrance and locate the lockbox near the door.",
-          "Enter the code shared by the host before arrival.",
-          "Return the key to the lockbox whenever you leave the home.",
-          "You will have private access to the apartment during your stay and will not share the space with anyone.",
+          "If you arrive before 10 PM, we will meet you in person and hand over the keys.",
         ],
       },
       {
-        title: "After entering",
+        title: "2. Late check-in — 10 PM or later",
         items: [
-          "Lock the entrance behind you.",
-          "Check that the WiFi connects and the main lights work.",
-          "Send a quick message to the host if anything looks different than expected.",
+          "If you arrive at 10 PM or later, follow the video instructions to collect your keys.",
+          "Click the video below to see how to get the keys.",
         ],
       },
     ],
-    tip: "If the code does not work, wait a few seconds and try again slowly before contacting the host.",
+    tip: "Let us know your expected arrival time. Contact the host if you need help collecting the keys.",
   },
   amenities: {
     titleKey: "amenities",
@@ -1086,7 +1117,7 @@ const guideDetails = {
           "You will not share the apartment with anyone during your stay.",
           "Local shops, bakeries, pharmacies, cafes, and markets are within walking distance.",
           "Basic kitchen utensils are available for simple meals and drinks.",
-          "Cups, spoons, and plates are provided in sets of 4. A fee of 40 applies for each broken or lost item.",
+          "Cups, spoons, and plates are provided in sets of 4. A fee of R$40 applies for each broken or lost item.",
           "Please bring preferred food, drinks, toiletries, towels, and personal-use items.",
         ],
       },
@@ -1211,18 +1242,18 @@ const guideDetailCopy = {
   en: guideDetails,
   pt: {
     "before-arrive": {
-      eyebrow: "Preparacao",
+      eyebrow: "Preparação",
       summary:
-        "Bem-vindo ao seu apartamento privativo e aconchegante no Real Parque, um dos bairros mais charmosos e bem localizados da cidade. Tenha estes detalhes a mao para fazer o check-in com tranquilidade.",
+        "Bem-vindo à Hospedaria Real Parque, com um apartamento privativo e aconchegante em um dos bairros mais charmosos e bem localizados da cidade. Tenha estes detalhes à mão para fazer o check-in com tranquilidade.",
       sections: [
         {
           title: "Antes de sair",
           items: [
-            "Confirme seu horario de chegada com o anfitriao se seus planos mudarem.",
-            "Salve o endereco e os dados do WiFi caso o sinal de celular esteja fraco.",
-            "Revise as instrucoes de check-in antes de chegar ao predio.",
-            "O apartamento fica perto de lojas locais, padarias, farmacias, cafes e mercados, tudo a uma curta caminhada.",
-            "Por favor, traga suas proprias toalhas. Podemos fornecer toalhas mediante solicitacao previa.",
+            "Confirme seu horário de chegada com o anfitrião se seus planos mudarem.",
+            "Salve o endereço e os dados do WiFi caso o sinal de celular esteja fraco.",
+            "Revise as instruções de check-in antes de chegar ao prédio.",
+            "O apartamento fica perto de lojas locais, padarias, farmácias, cafés e mercados, tudo a uma curta caminhada.",
+            "Por favor, traga suas próprias toalhas. Podemos fornecer toalhas mediante solicitação prévia.",
           ],
         },
         {
@@ -1231,82 +1262,78 @@ const guideDetailCopy = {
             "Traga seus itens pessoais de higiene, como sabonete, shampoo, condicionador, creme dental, escova de dentes, desodorante e outros produtos que precisar.",
             "Toalhas de banho e de praia.",
             "Medicamentos pessoais.",
-            "Roupas confortaveis e roupa de dormir.",
+            "Roupas confortáveis e roupa de dormir.",
             "Carregadores para celular e outros dispositivos.",
-            "Chinelos ou calcado para usar dentro de casa.",
+            "Chinelos ou calçado para usar dentro de casa.",
             "Protetor solar e repelente.",
             "Compras, lanches, bebidas ou alimentos especiais.",
-            "Sabao para roupa, caso pretenda lavar roupas.",
-            "Documento de identificacao valido para o check-in.",
-            "Utensilios basicos de cozinha estao disponiveis no apartamento, mas os hospedes devem trazer seus alimentos, bebidas e itens de uso pessoal preferidos.",
+            "Sabão para roupa, caso pretenda lavar roupas.",
+            "Documento de identificação válido para o check-in.",
+            "Utensílios básicos de cozinha estão disponíveis no apartamento, mas os hóspedes devem trazer seus alimentos, bebidas e itens de uso pessoal preferidos.",
           ],
         },
         {
-          title: "Aviso amigavel",
+          title: "Aviso amigável",
           items: [
-            "Um pequeno grupo se reune no espaco nos fundos do predio todos os sabados pela manha, das 8h45 as 9h15.",
-            "Sua privacidade nao sera afetada durante esse periodo.",
-            "Se isso causar algum inconveniente, recomendamos evitar reservas para sexta-feira a noite.",
+            "Um pequeno grupo se reúne no espaço nos fundos do prédio todos os sábados pela manhã, das 8h45 às 9h15.",
+            "Sua privacidade não será afetada durante esse período.",
+            "Se isso causar algum inconveniente, recomendamos evitar reservas para sexta-feira à noite.",
           ],
         },
       ],
-      tip: "Avise o anfitriao com antecedencia se precisar de ajuda com malas, horario de chegada ou alguma organizacao especial.",
+      tip: "Avise o anfitrião com antecedência se precisar de ajuda com malas, horário de chegada ou alguma organização especial.",
     },
     "check-in": {
-      eyebrow: "Self check-in",
+      eyebrow: "Check-in simples",
       summary:
-        "Use estes passos quando chegar. O processo foi pensado para ser simples, privativo e facil de seguir.",
+        "O check-in é simples. Escolha abaixo a opção que corresponde ao seu horário de chegada.",
       sections: [
         {
-          title: "Na propriedade",
+          title: "1. Chegada antes das 22h",
           items: [
-            "Va ate a entrada privativa e localize o cofre de chaves perto da porta.",
-            "Digite o codigo compartilhado pelo anfitriao antes da chegada.",
-            "Devolva a chave ao cofre sempre que sair da acomodacao.",
-            "Voce tera acesso privativo ao apartamento durante a estadia e nao compartilhara o espaco com ninguem.",
+            "Se você chegar antes das 22h, receberemos você pessoalmente para entregar as chaves.",
           ],
         },
         {
-          title: "Depois de entrar",
+          title: "2. Check-in tardio — a partir das 22h",
           items: [
-            "Tranque a entrada atras de voce.",
-            "Confira se o WiFi conecta e se as luzes principais funcionam.",
-            "Envie uma mensagem rapida ao anfitriao se algo estiver diferente do esperado.",
+            "Se você chegar às 22h ou mais tarde, siga as instruções do vídeo para retirar as chaves.",
+            "Clique no vídeo abaixo para ver como pegar as chaves.",
           ],
         },
       ],
-      tip: "Se o codigo nao funcionar, aguarde alguns segundos e tente novamente com calma antes de contatar o anfitriao.",
+      tip: "Informe seu horário previsto de chegada. Fale com o anfitrião se precisar de ajuda para retirar as chaves.",
     },
     amenities: {
-      eyebrow: "Sobre o espaco",
+      eyebrow: "Sobre o espaço",
       summary:
-        "Este e um apartamento privativo com dois quartos e cozinha completa. O apartamento inteiro sera exclusivamente seu durante a estadia.",
+        "Este é um apartamento privativo com dois quartos e cozinha completa. O apartamento inteiro será exclusivamente seu durante a estadia.",
       sections: [
         {
           title: "Detalhes da propriedade",
           items: [
             "Apartamento privativo no Real Parque com dois quartos e cozinha completa.",
-            "Voce nao compartilhara o apartamento com ninguem durante a estadia.",
-            "Lojas locais, padarias, farmacias, cafes e mercados ficam a uma curta caminhada.",
-            "Utensilios basicos de cozinha estao disponiveis para refeicoes e bebidas simples.",
-            "Copos, colheres e pratos sao fornecidos em conjuntos de 4. Sera cobrada uma taxa de 40 por cada item quebrado ou perdido.",
-            "Traga alimentos, bebidas, itens de higiene, toalhas e objetos de uso pessoal de sua preferencia.",
+            "Você não compartilhará o apartamento com ninguém durante a estadia.",
+            "Lojas locais, padarias, farmácias, cafés e mercados ficam a uma curta caminhada.",
+            "Utensílios básicos de cozinha estão disponíveis para refeições e bebidas simples.",
+            "Copos, colheres e pratos são fornecidos em conjuntos de 4. Será cobrada uma taxa de R$40 por cada item quebrado ou perdido.",
+            "Traga alimentos, bebidas, itens de higiene, toalhas e objetos de uso pessoal de sua preferência.",
           ],
         },
         {
-          title: "Configuracao dos quartos e acesso",
+          title: "Configuração dos quartos e acesso",
           items: [
-            "Reservas para 1 a 2 hospedes incluem acesso a 1 quarto.",
-            "Reservas para 3 a 4 hospedes incluem acesso a 2 quartos.",
-            "O segundo quarto permanece trancado para reservas menores e pode ser liberado mediante solicitacao previa.",
-            "Um quarto tem 2 camas de solteiro, ideal para hospedes que preferem dormir separados.",
-            "Um quarto tem 1 cama queen, disponivel para reservas de 3 a 4 hospedes ou para hospedes que desejam compartilhar a mesma cama mediante solicitacao.",
+            "Reservas para 1 a 2 hóspedes incluem acesso a 1 quarto.",
+            "Reservas para 3 a 4 hóspedes incluem acesso a 2 quartos.",
+            "O segundo quarto permanece trancado para reservas menores e pode ser liberado mediante solicitação prévia.",
+            "Um quarto tem 2 camas de solteiro, ideal para hóspedes que preferem dormir separados.",
+            "Um quarto tem 1 cama queen, disponível para reservas de 3 a 4 hóspedes ou para hóspedes que desejam compartilhar a mesma cama mediante solicitação.",
           ],
         },
         {
           title: "Comodidades dos quartos",
           items: [
-            "Televisao em cada quarto.",
+            "Televisão em cada quarto.",
             "Roupa de cama e cobertores.",
             "2 travesseiros por cama.",
             "Ventiladores de teto modernos com controle remoto.",
@@ -1314,179 +1341,175 @@ const guideDetailCopy = {
           ],
         },
       ],
-      tip: "Precisa de outra configuracao de camas ou acesso ao segundo quarto? Fale com o anfitriao antes da chegada para que tudo seja preparado.",
+      tip: "Precisa de outra configuração de camas ou acesso ao segundo quarto? Fale com o anfitrião antes da chegada para que tudo seja preparado.",
     },
     "how-things-work": {
       eyebrow: "Aparelhos",
       summary:
-        "A maioria dos controles e simples. Estas observacoes ajudam a manter a acomodacao confortavel e evitam mudancas acidentais.",
+        "A maioria dos controles é simples. Estas observações ajudam a manter a acomodação confortável e evitam mudanças acidentais.",
       sections: [
         {
           title: "Luzes e ventiladores de teto",
           items: [
-            "Desligue as luzes ao sair da acomodacao.",
+            "Desligue as luzes ao sair da acomodação.",
             "Use os controles remotos para ajustar os ventiladores de teto modernos.",
-            "Desligue os ventiladores de teto ao sair da acomodacao.",
+            "Desligue os ventiladores de teto ao sair da acomodação.",
           ],
         },
         {
-          title: "TV e eletrodomesticos",
+          title: "TV e eletrodomésticos",
           items: [
             "Use os controles remotos fornecidos e deixe-os onde os encontrou.",
-            "Nao desligue roteadores, dispositivos inteligentes ou equipamentos identificados da tomada.",
-            "Pergunte ao anfitriao antes de mudar configuracoes de dispositivos ou mover eletrodomesticos.",
+            "Não desligue roteadores, dispositivos inteligentes ou equipamentos identificados da tomada.",
+            "Pergunte ao anfitrião antes de mudar configurações de dispositivos ou mover eletrodomésticos.",
           ],
         },
       ],
-      tip: "Se algo nao responder, verifique a energia primeiro e envie mensagem ao anfitriao antes de reiniciar equipamentos.",
+      tip: "Se algo não responder, verifique a energia primeiro e envie mensagem ao anfitrião antes de reiniciar equipamentos.",
     },
     "trash-recycling": {
       eyebrow: "Mantenha organizado",
       summary:
-        "Um pouco de cuidado com a limpeza mantem a estadia confortavel e ajuda o proximo hospede a encontrar o espaco fresco.",
+        "Um pouco de cuidado com a limpeza mantém a estadia confortável e ajuda o próximo hóspede a encontrar o espaço fresco.",
       sections: [
         {
           title: "Durante a estadia",
           items: [
-            "Coloque o lixo domestico em sacos antes de leva-lo para a lixeira externa.",
-            "Separe garrafas, latas e papeis limpos quando houver reciclagem disponivel.",
-            "Nao deixe restos de comida abertos dentro do apartamento durante a noite.",
+            "Coloque o lixo doméstico em sacos antes de levá-lo para a lixeira externa.",
+            "Separe garrafas, latas e papéis limpos quando houver reciclagem disponível.",
+            "Não deixe restos de comida abertos dentro do apartamento durante a noite.",
           ],
         },
         {
           title: "Antes do check-out",
           items: [
             "Amarre bem os sacos de lixo.",
-            "Coloque o lixo na area designada.",
-            "Consulte o anfitriao sobre itens grandes ou descarte especial.",
+            "Coloque o lixo na área designada.",
+            "Consulte o anfitrião sobre itens grandes ou descarte especial.",
           ],
         },
       ],
-      tip: "Na duvida, coloque tudo em saco fechado e pergunte ao anfitriao onde deve descartar.",
+      tip: "Na dúvida, coloque tudo em saco fechado e pergunte ao anfitrião onde deve descartar.",
     },
     emergency: {
       eyebrow: "Contatos importantes",
       summary:
-        "Em situacoes urgentes, priorize a seguranca. Acione os servicos de emergencia em caso de perigo imediato e depois avise o anfitriao.",
+        "Em situações urgentes, priorize a segurança. Acione os serviços de emergência em caso de perigo imediato e depois avise o anfitrião.",
       sections: [
         {
           title: "Perigo imediato",
           items: [
-            "Ligue imediatamente para os servicos de emergencia locais em caso de incendio, emergencia medica ou perigo ativo.",
+            "Ligue imediatamente para os serviços de emergência locais em caso de incêndio, emergência médica ou perigo ativo.",
             "Saia da propriedade se permanecer dentro parecer inseguro.",
-            "Nao tente fazer reparos perigosos por conta propria.",
+            "Não tente fazer reparos perigosos por conta própria.",
           ],
         },
         {
           title: "Problemas na propriedade",
           items: [
-            "Contate o anfitriao para problemas com chaves, vazamentos, falta de energia ou manutencao urgente.",
+            "Contate o anfitrião para problemas com chaves, vazamentos, falta de energia ou manutenção urgente.",
             "Envie fotos quando isso ajudar a explicar o problema.",
-            "Mantenha corredores e saidas livres enquanto aguarda ajuda.",
+            "Mantenha corredores e saídas livres enquanto aguarda ajuda.",
           ],
         },
       ],
-      tip: "Para perguntas nao urgentes, use o botao de contato para que o anfitriao responda com as informacoes certas.",
+      tip: "Para perguntas não urgentes, use o botão de contato para que o anfitrião responda com as informações certas.",
     },
   },
   es: {
     "before-arrive": {
-      eyebrow: "Preparacion",
+      eyebrow: "Preparación",
       summary:
-        "Bienvenido a tu apartamento privado y acogedor en Real Parque, uno de los barrios mas encantadores y mejor ubicados de la ciudad. Ten estos detalles a mano para que el check-in sea tranquilo y rapido.",
+        "Bienvenido a tu apartamento privado y acogedor en Real Parque, uno de los barrios más encantadores y mejor ubicados de la ciudad. Ten estos detalles a mano para que el check-in sea tranquilo y rápido.",
       sections: [
         {
           title: "Antes de salir",
           items: [
-            "Confirma tu horario de llegada con el anfitrion si tus planes cambian.",
-            "Guarda la direccion y los datos del WiFi por si la senal movil es debil.",
+            "Confirma tu horario de llegada con el anfitrión si tus planes cambian.",
+            "Guarda la dirección y los datos del WiFi por si la señal móvil es débil.",
             "Revisa las instrucciones de check-in antes de llegar al edificio.",
-            "El apartamento esta rodeado de tiendas locales, panaderias, farmacias, cafes y mercados a poca distancia a pie.",
+            "El apartamento está rodeado de tiendas locales, panaderías, farmacias, cafés y mercados a poca distancia a pie.",
             "Por favor, trae tus propias toallas. Podemos proporcionarlas con solicitud previa.",
           ],
         },
         {
-          title: "Que traer",
+          title: "Qué traer",
           items: [
-            "Trae tus articulos personales de higiene, como jabon, shampoo, acondicionador, pasta dental, cepillo de dientes, desodorante y cualquier otro producto que necesites.",
-            "Toallas de bano y de playa.",
+            "Trae tus artículos personales de higiene, como jabón, shampoo, acondicionador, pasta dental, cepillo de dientes, desodorante y cualquier otro producto que necesites.",
+            "Toallas de baño y de playa.",
             "Medicamentos personales.",
-            "Ropa comoda y ropa para dormir.",
-            "Cargadores para tu telefono y otros dispositivos.",
+            "Ropa cómoda y ropa para dormir.",
+            "Cargadores para tu teléfono y otros dispositivos.",
             "Pantuflas o calzado para interior.",
             "Protector solar y repelente de insectos.",
             "Comestibles, snacks, bebidas o alimentos especiales.",
             "Detergente para ropa, si planeas lavar ropa.",
-            "Documento de identidad valido para el check-in.",
-            "Hay utensilios basicos de cocina disponibles en el apartamento, pero los huespedes deben traer sus alimentos, bebidas y articulos personales preferidos.",
+            "Documento de identidad válido para el check-in.",
+            "Hay utensilios básicos de cocina disponibles en el apartamento, pero los huéspedes deben traer sus alimentos, bebidas y artículos personales preferidos.",
           ],
         },
         {
           title: "Aviso amable",
           items: [
-            "Un pequeno grupo se reune en el espacio de la parte trasera del edificio todos los sabados por la manana, de 8:45 AM a 9:15 AM.",
-            "Tu privacidad no se vera afectada durante este tiempo.",
-            "Si esto te causa algun inconveniente, recomendamos evitar reservas para los viernes por la noche.",
+            "Un pequeño grupo se reúne en el espacio de la parte trasera del edificio todos los sábados por la mañana, de 8:45 AM a 9:15 AM.",
+            "Tu privacidad no se verá afectada durante este tiempo.",
+            "Si esto te causa algún inconveniente, recomendamos evitar reservas para los viernes por la noche.",
           ],
         },
       ],
-      tip: "Escribe al anfitrion con anticipacion si necesitas ayuda con equipaje, horario de llegada o algun arreglo especial.",
+      tip: "Escribe al anfitrión con anticipación si necesitas ayuda con equipaje, horario de llegada o algún arreglo especial.",
     },
     "check-in": {
-      eyebrow: "Self check-in",
+      eyebrow: "Check-in sencillo",
       summary:
-        "Usa estos pasos cuando llegues. El proceso esta pensado para ser simple, privado y facil de seguir.",
+        "El check-in es sencillo. Elige la opción que corresponda a tu hora de llegada.",
       sections: [
         {
-          title: "En la propiedad",
+          title: "1. Llegada antes de las 22:00",
           items: [
-            "Ve a la entrada privada y localiza la caja de seguridad cerca de la puerta.",
-            "Ingresa el codigo compartido por el anfitrion antes de la llegada.",
-            "Devuelve la llave a la caja de seguridad cada vez que salgas de la casa.",
-            "Tendras acceso privado al apartamento durante tu estadia y no compartiras el espacio con nadie.",
+            "Si llegas antes de las 22:00, te recibiremos en persona para entregarte las llaves.",
           ],
         },
         {
-          title: "Despues de entrar",
+          title: "2. Check-in tardío — desde las 22:00",
           items: [
-            "Cierra la entrada con llave detras de ti.",
-            "Comprueba que el WiFi conecte y que las luces principales funcionen.",
-            "Envia un mensaje rapido al anfitrion si algo se ve diferente a lo esperado.",
+            "Si llegas a las 22:00 o más tarde, sigue las instrucciones del video para recoger las llaves.",
+            "Haz clic en el video de abajo para ver cómo recoger las llaves.",
           ],
         },
       ],
-      tip: "Si el codigo no funciona, espera unos segundos e intentalo de nuevo con calma antes de contactar al anfitrion.",
+      tip: "Indícanos tu hora prevista de llegada. Contacta al anfitrión si necesitas ayuda para recoger las llaves.",
     },
     amenities: {
       eyebrow: "Sobre el espacio",
       summary:
-        "Este es un apartamento privado con dos dormitorios y cocina completa. Todo el apartamento sera exclusivamente tuyo durante la estadia.",
+        "Este es un apartamento privado con dos dormitorios y cocina completa. Todo el apartamento será exclusivamente tuyo durante la estadía.",
       sections: [
         {
           title: "Detalles de la propiedad",
           items: [
             "Apartamento privado en Real Parque con dos dormitorios y cocina completa.",
-            "No compartiras el apartamento con nadie durante tu estadia.",
-            "Tiendas locales, panaderias, farmacias, cafes y mercados estan a poca distancia a pie.",
-            "Hay utensilios basicos de cocina disponibles para comidas y bebidas simples.",
-            "Vasos, cucharas y platos se proporcionan en juegos de 4. Se cobrara una tarifa de 40 por cada articulo roto o perdido.",
-            "Trae tus alimentos, bebidas, articulos de higiene, toallas y articulos personales preferidos.",
+            "No compartirás el apartamento con nadie durante tu estadía.",
+            "Tiendas locales, panaderías, farmacias, cafés y mercados están a poca distancia a pie.",
+            "Hay utensilios básicos de cocina disponibles para comidas y bebidas simples.",
+            "Vasos, cucharas y platos se proporcionan en juegos de 4. Se cobrará una tarifa de R$40 por cada artículo roto o perdido.",
+            "Trae tus alimentos, bebidas, artículos de higiene, toallas y artículos personales preferidos.",
           ],
         },
         {
-          title: "Configuracion de habitaciones y acceso",
+          title: "Configuración de habitaciones y acceso",
           items: [
-            "Reservas para 1 a 2 huespedes incluyen acceso a 1 dormitorio.",
-            "Reservas para 3 a 4 huespedes incluyen acceso a 2 dormitorios.",
-            "El segundo dormitorio permanece cerrado para reservas pequenas y puede abrirse con solicitud previa.",
-            "Una habitacion tiene 2 camas individuales, ideal para huespedes que prefieren dormir separados.",
-            "Una habitacion tiene 1 cama queen, disponible para reservas de 3 a 4 huespedes o para huespedes que desean compartir la misma cama con solicitud previa.",
+            "Reservas para 1 a 2 huéspedes incluyen acceso a 1 dormitorio.",
+            "Reservas para 3 a 4 huéspedes incluyen acceso a 2 dormitorios.",
+            "El segundo dormitorio permanece cerrado para reservas pequeñas y puede abrirse con solicitud previa.",
+            "Una habitación tiene 2 camas individuales, ideal para huéspedes que prefieren dormir separados.",
+            "Una habitación tiene 1 cama queen, disponible para reservas de 3 a 4 huéspedes o para huéspedes que desean compartir la misma cama con solicitud previa.",
           ],
         },
         {
           title: "Comodidades de las habitaciones",
           items: [
-            "Television en cada habitacion.",
+            "Televisión en cada habitación.",
             "Ropa de cama y mantas.",
             "2 almohadas por cama.",
             "Ventiladores de techo modernos con control remoto.",
@@ -1494,12 +1517,12 @@ const guideDetailCopy = {
           ],
         },
       ],
-      tip: "Necesitas otra configuracion de camas o acceso al segundo dormitorio? Contacta al anfitrion antes de la llegada para que todo pueda prepararse.",
+      tip: "Necesitas otra configuración de camas o acceso al segundo dormitorio? Contacta al anfitrión antes de la llegada para que todo pueda prepararse.",
     },
     "how-things-work": {
       eyebrow: "Dispositivos",
       summary:
-        "La mayoria de los controles son simples. Estas notas ayudan a mantener el apartamento comodo y evitan cambios accidentales.",
+        "La mayoría de los controles son simples. Estas notas ayudan a mantener el apartamento cómodo y evitan cambios accidentales.",
       sections: [
         {
           title: "Luces y ventiladores de techo",
@@ -1510,25 +1533,25 @@ const guideDetailCopy = {
           ],
         },
         {
-          title: "TV y electrodomesticos",
+          title: "TV y electrodomésticos",
           items: [
-            "Usa los controles remotos proporcionados y dejalos donde los encontraste.",
+            "Usa los controles remotos proporcionados y déjalos donde los encontraste.",
             "No desconectes routers, dispositivos inteligentes ni equipos etiquetados.",
-            "Pregunta al anfitrion antes de cambiar configuraciones de dispositivos o mover electrodomesticos.",
+            "Pregunta al anfitrión antes de cambiar configuraciones de dispositivos o mover electrodomésticos.",
           ],
         },
       ],
-      tip: "Si algo no responde, revisa primero la energia y escribe al anfitrion antes de reiniciar equipos.",
+      tip: "Si algo no responde, revisa primero la energía y escribe al anfitrión antes de reiniciar equipos.",
     },
     "trash-recycling": {
       eyebrow: "Mantenlo ordenado",
       summary:
-        "Un poco de limpieza mantiene la estadia comoda y ayuda a que el proximo huesped encuentre el espacio fresco.",
+        "Un poco de limpieza mantiene la estadía cómoda y ayuda a que el próximo huésped encuentre el espacio fresco.",
       sections: [
         {
-          title: "Durante tu estadia",
+          title: "Durante tu estadía",
           items: [
-            "Coloca la basura domestica en bolsas antes de llevarla al contenedor exterior.",
+            "Coloca la basura doméstica en bolsas antes de llevarla al contenedor exterior.",
             "Separa botellas, latas y papel limpios cuando haya reciclaje disponible.",
             "No dejes restos de comida abiertos dentro del apartamento durante la noche.",
           ],
@@ -1537,22 +1560,22 @@ const guideDetailCopy = {
           title: "Antes del check-out",
           items: [
             "Ata bien las bolsas de basura.",
-            "Coloca la basura en el area designada.",
-            "Consulta al anfitrion sobre articulos grandes o descarte especial.",
+            "Coloca la basura en el área designada.",
+            "Consulta al anfitrión sobre artículos grandes o descarte especial.",
           ],
         },
       ],
-      tip: "Si tienes dudas, ponlo en una bolsa cerrada y pregunta al anfitrion donde debe ir.",
+      tip: "Si tienes dudas, ponlo en una bolsa cerrada y pregunta al anfitrión donde debe ir.",
     },
     emergency: {
       eyebrow: "Contactos importantes",
       summary:
-        "En situaciones urgentes, prioriza la seguridad. Llama a los servicios de emergencia si hay peligro inmediato y luego avisa al anfitrion.",
+        "En situaciones urgentes, prioriza la seguridad. Llama a los servicios de emergencia si hay peligro inmediato y luego avisa al anfitrión.",
       sections: [
         {
           title: "Peligro inmediato",
           items: [
-            "Llama de inmediato a los servicios de emergencia locales en caso de incendio, emergencia medica o peligro activo.",
+            "Llama de inmediato a los servicios de emergencia locales en caso de incendio, emergencia médica o peligro activo.",
             "Sal de la propiedad si permanecer dentro no se siente seguro.",
             "No intentes hacer reparaciones riesgosas por tu cuenta.",
           ],
@@ -1560,13 +1583,13 @@ const guideDetailCopy = {
         {
           title: "Problemas en la propiedad",
           items: [
-            "Contacta al anfitrion por cierres, filtraciones, cortes de energia o mantenimiento urgente.",
-            "Envia fotos cuando ayuden a explicar el problema.",
-            "Manten pasillos y salidas libres mientras esperas ayuda.",
+            "Contacta al anfitrión por cierres, filtraciones, cortes de energía o mantenimiento urgente.",
+            "Envía fotos cuando ayuden a explicar el problema.",
+            "Mantén pasillos y salidas libres mientras esperas ayuda.",
           ],
         },
       ],
-      tip: "Para preguntas no urgentes, usa el boton de contacto para que el anfitrion responda con los detalles correctos.",
+      tip: "Para preguntas no urgentes, usa el boton de contacto para que el anfitrión responda con los detalles correctos.",
     },
   },
 } satisfies Record<Language, Record<GuideDetailKey, GuideDetailCopy>>;
@@ -1581,10 +1604,15 @@ function GuideDetailPage({
   const detail = guideDetails[page];
   const copy = guideDetailCopy[language][page];
   const title = t[detail.titleKey] ?? detail.eyebrow;
+  const videoCopy = {
+    en: { title: "How to collect your keys", pending: "Video coming soon", help: "Contact the host for late check-in instructions until the video is available." },
+    pt: { title: "Como retirar suas chaves", pending: "Vídeo em breve", help: "Enquanto o vídeo não estiver disponível, fale com o anfitrião para receber as instruções de check-in tardio." },
+    es: { title: "Cómo recoger tus llaves", pending: "Video próximamente", help: "Hasta que el video esté disponible, contacta al anfitrión para recibir las instrucciones de check-in tardío." },
+  }[language];
 
   return (
     <PageLayout
-      title={translations.pt[detail.titleKey] ?? title}
+      title={title}
       language={language}
       setLanguage={setLanguage}
       t={t}
@@ -1624,7 +1652,7 @@ function GuideDetailPage({
         </section>
       )}
 
-      {copy.sections.map((section) => (
+      {copy.sections.map((section, index) => (
         <Card key={section.title}>
           <h3 className="text-base font-bold">{section.title}</h3>
           <div className="mt-4 space-y-3">
@@ -1635,6 +1663,29 @@ function GuideDetailPage({
               </div>
             ))}
           </div>
+          {page === "check-in" && index === 1 && (
+            <figure className="mt-5 overflow-hidden rounded-lg border border-[#dfe4dd] bg-[#ecf3f2]">
+              {checkInVideoSrc ? (
+                <video
+                  controls
+                  playsInline
+                  preload="metadata"
+                  src={checkInVideoSrc}
+                  aria-label={videoCopy.title}
+                  className="aspect-video w-full bg-black"
+                />
+              ) : (
+                <div className="flex aspect-video flex-col items-center justify-center gap-3 px-5 text-center text-[#123c3c]">
+                  <Video size={36} aria-hidden="true" />
+                  <p className="font-semibold">{videoCopy.pending}</p>
+                </div>
+              )}
+              <figcaption className="border-t border-[#dfe4dd] bg-white p-4">
+                <p className="text-sm font-semibold">{videoCopy.title}</p>
+                {!checkInVideoSrc && <p className="mt-1 text-sm leading-5 text-[#5f6b65]">{videoCopy.help}</p>}
+              </figcaption>
+            </figure>
+          )}
         </Card>
       ))}
 
@@ -1645,7 +1696,7 @@ function GuideDetailPage({
           </div>
           <div>
             <h3 className="font-semibold">
-              {language === "pt" ? "Dica util" : language === "es" ? "Consejo util" : "Helpful tip"}
+              {language === "pt" ? "Dica útil" : language === "es" ? "Consejo útil" : "Helpful tip"}
             </h3>
             <p className="mt-1 text-sm leading-5 text-[#5f6b65]">{copy.tip}</p>
           </div>
@@ -1739,7 +1790,7 @@ function WifiPage({
               ${
                 copiedPassword
                   ? "bg-[#ecf3f2] text-[#0f766e]"
-                  : "bg-[#fff0f3] text-[#ff385c] hover:bg-[#ffe1e8]"
+                  : "bg-[#fff0f3] text-[#c91e40] hover:bg-[#ffe1e8]"
               }
               sm:w-auto
             `}
