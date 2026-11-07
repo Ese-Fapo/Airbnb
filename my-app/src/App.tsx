@@ -99,7 +99,7 @@ const translations: Record<Language, Record<string, string>> = {
     noParties: "No Parties",
     quietHome: "We love our quiet home.",
     quietHours: "Quiet Hours",
-    quietTime: "10 PM - 8 AM",
+    quietTime: "10PM - 8AM",
     pets: "Pets",
     noPets: "No pets allowed.",
     respect: "Respect",
