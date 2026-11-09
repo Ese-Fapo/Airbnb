@@ -1,6 +1,24 @@
 // Public-map road estimates reviewed 2026-11-09. See docs/explore-data.md.
 export type DistanceEstimate = { distanceKm: number | null; coordinates: [number, number]; precision: 'street' | 'place'; source: string }
 export const exploreDistances: Record<string, DistanceEstimate> = {
+  "Parque Ambiental dos Sabiás": {
+    "coordinates": [-48.6748215, -27.5610891],
+    "source": "https://maps.app.goo.gl/chHfpfqLqp1QToZF8",
+    "precision": "place",
+    "distanceKm": 4.7
+  },
+  "Parque Costa Azul": {
+    "coordinates": [-48.5918234, -27.5785797],
+    "source": "https://www.openstreetmap.org/way/193808199",
+    "precision": "street",
+    "distanceKm": 6.1
+  },
+  "Parque Pedra Branca": {
+    "coordinates": [-48.6815692, -27.6283238],
+    "source": "https://www.openstreetmap.org/way/548864251",
+    "precision": "place",
+    "distanceKm": 15.1
+  },
   "Thiago Pizza e Lanches": {
     "coordinates": [
       -48.6207061,
@@ -343,7 +361,7 @@ export const exploreDistances: Record<string, DistanceEstimate> = {
     "precision": "street",
     "distanceKm": 0.4
   },
-  "Parque Beira Mar": {
+  "Parque Beira-Mar de São José": {
     "coordinates": [
       -48.6125741,
       -27.6028563
@@ -388,14 +406,14 @@ export const exploreDistances: Record<string, DistanceEstimate> = {
     "precision": "place",
     "distanceKm": 3.8
   },
-  "Ponte Hercílio Luz & Parque da Luz": {
+  "Parque da Luz": {
     "coordinates": [
-      -48.5654433,
-      -27.5938202
+      -48.5601991,
+      -27.5925794
     ],
-    "source": "https://www.openstreetmap.org/way/376367899",
+    "source": "https://www.openstreetmap.org/way/131353997",
     "precision": "place",
-    "distanceKm": 9.4
+    "distanceKm": 10
   },
   "Mercado Público de Florianópolis": {
     "source": "https://www.openstreetmap.org/relation/2995576",
