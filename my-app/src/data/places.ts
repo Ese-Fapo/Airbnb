@@ -132,26 +132,15 @@ export const places: Record<Category, Place[]> = {
       source: 'https://komprao.com.br/lojas/',
     },
     {
-      name: 'Farm\u00e1cia Farma + Popular',
-      location: 'R. Franklin Cascaes, 170, sala 02 \u00b7 Real Parque, S\u00e3o Jos\u00e9',
+      name: 'Farmácia do Cesar',
+      location: 'R. José Antônio Pereira, 2210, sala 01 · Ipiranga, São José - SC · CEP 88111-490',
       type: 'Pharmacy',
       detail: {
-        en: 'Local pharmacy for medicines and personal care items.',
-        pt: 'Farm\u00e1cia local para medicamentos e itens de higiene.',
-        es: 'Farmacia local para medicamentos y art\u00edculos de higiene.',
+        en: 'Neighborhood pharmacy for medicines and personal care items. Check current opening hours before visiting.',
+        pt: 'Farmácia do bairro para medicamentos e itens de higiene. Confira o horário atual antes de visitar.',
+        es: 'Farmacia del barrio para medicamentos y artículos de higiene. Consulta el horario actual antes de ir.',
       },
-      source: 'https://www.solutudo.com.br/empresas/sc/s-jose/farmacias/farmacia-moreira-e-silva-ltda-24140938',
-    },
-    {
-      name: 'Farm\u00e1cia S\u00e3o Carlos',
-      location: 'R. M\u00e1rio C\u00e9sar da Costa, 2421 \u00b7 Real Parque, S\u00e3o Jos\u00e9',
-      type: 'Pharmacy',
-      detail: {
-        en: 'Another pharmacy option in the neighborhood.',
-        pt: 'Outra op\u00e7\u00e3o de farm\u00e1cia no bairro.',
-        es: 'Otra farmacia en el barrio.',
-      },
-      source: 'https://applocal.com.br/empresa/farmacia-sao-carlos/sao-jose/sc/9278252',
+      source: 'https://www.solutudo.com.br/empresas/sc/s-jose/farmacias/farmacia-do-cesar-ltda-28001053',
     },
   ],
   beaches: [

@@ -117,9 +117,9 @@ test('Nearby recommendations have translated descriptions and valid source URLs'
     }
   }
   assert.equal(new Set(names).size, names.length);
-  for (const name of ['Tempero da JU', 'Cesar Gourmet — Ipiranga', 'Alemão Lanches e Porções', 'Mercado Tibes 24hs']) assert.ok(names.includes(name));
+  for (const name of ['Tempero da JU', 'Cesar Gourmet — Ipiranga', 'Alemão Lanches e Porções', 'Mercado Tibes 24hs', 'Farmácia do Cesar']) assert.ok(names.includes(name));
   assert.ok(names.some((name) => name.startsWith('Praça do CEU')));
-  for (const removed of ['Moreira', 'Big Bang', 'Uara', 'Afonso Burger', 'Villa Park', 'Somel', 'Ponto de ônibus', 'Unidade Básica', 'Auto Posto']) {
+  for (const removed of ['Moreira', 'Big Bang', 'Uara', 'Afonso Burger', 'Villa Park', 'Somel', 'Ponto de ônibus', 'Unidade Básica', 'Auto Posto', 'Farmácia Farma + Popular', 'Farmácia São Carlos']) {
     assert.ok(names.every((name) => !name.includes(removed)), `Removed place returned: ${removed}`);
   }
 });

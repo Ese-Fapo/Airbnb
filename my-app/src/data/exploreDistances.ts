@@ -136,23 +136,14 @@ export const exploreDistances: Record<string, DistanceEstimate> = {
     "precision": "street",
     "distanceKm": 0.6
   },
-  "Farmácia Farma + Popular": {
+  "Farmácia do Cesar": {
     "coordinates": [
-      -48.6382986,
-      -27.5653482
+      -48.6403842,
+      -27.5693346
     ],
-    "source": "https://www.openstreetmap.org/way/530037208",
-    "precision": "street",
-    "distanceKm": 0.6
-  },
-  "Farmácia São Carlos": {
-    "coordinates": [
-      -48.636692,
-      -27.5637919
-    ],
-    "source": "https://www.openstreetmap.org/node/13110619413",
-    "precision": "street",
-    "distanceKm": 0.9
+    "source": "https://farmaciaqui.net/farmacia-do-cesar-sao-jose-sc-9894",
+    "precision": "place",
+    "distanceKm": 0.3
   },
   "Praia de Palmas": {
     "coordinates": [
