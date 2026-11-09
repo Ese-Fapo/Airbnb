@@ -1,6 +1,6 @@
 # Explore recommendations
 
-Reviewed 9 November 2026. The guide contains 46 places. Names, descriptions and category assignments are in `src/data/places.ts`; distance evidence is in `src/data/exploreDistances.ts`; sorting, search and cost classification are in `src/data/explorePlanning.ts`.
+Reviewed 9 November 2026. The guide contains 46 places. Names, descriptions and category assignments are in `src/data/places.ts`; distance evidence is in `src/data/exploreDistances.ts`; sorting and cost classification are in `src/data/explorePlanning.ts`.
 
 The host reported Farma + Popular and São Carlos closed, so both were removed. Farmácia do Cesar replaces them at Rua José Antônio Pereira, 2210, sala 01, Ipiranga, as listed by [Solutudo](https://www.solutudo.com.br/empresas/sc/s-jose/farmacias/farmacia-do-cesar-ltda-28001053). Its map pin comes from the directions link on [FarmáciAQUI](https://farmaciaqui.net/farmacia-do-cesar-sao-jose-sc-9894); OSRM returned 252.5 m by road, displayed as approximately 0.3 km. Published phone numbers differ, so no phone or fixed opening hours were added.
 

@@ -153,17 +153,10 @@ test('Explore cost filters distinguish free entry, purchases and tickets', () =>
   assert.deepEqual(getExplorePlaces({ category: 'sights', cost: 'paid' }).map(place => place.name), [
     'Fortaleza de São José da Ponta Grossa', 'Água Show Park', 'Beto Carrero World',
   ]);
-  assert.equal(getExplorePlaces({ query: 'Parceiros' })[0].category, 'food');
+  assert.ok(getExplorePlaces({ category: 'food' }).some(place => place.name === 'Parceiros Conveniência'));
 });
 
-test('Explore search ignores accents and case and combines with category and cost', () => {
-  assert.ok(getExplorePlaces({ query: '  TINGUA  ' }).some(place => place.name === 'Praia do Tinguá'));
-  assert.deepEqual(getExplorePlaces({ query: 'Penha', cost: 'paid', category: 'sights' }).map(place => place.name), ['Beto Carrero World']);
-  assert.deepEqual(getExplorePlaces({ query: 'no-such-destination' }), []);
-  assert.equal(getExplorePlaces().length, Object.values(places).flat().length);
-});
-
-test('Explore initially exposes an accessible search, cost controls and the nearest places', () => {
+test('Explore exposes cost controls and the nearest places without a search box', () => {
   for (const [language, heading, costLabel] of [
     ['en', 'Closest to farthest', 'Any cost'],
     ['pt', 'Do mais perto ao mais longe', 'Qualquer custo'],
@@ -172,7 +165,7 @@ test('Explore initially exposes an accessible search, cost controls and the near
     environment(language, 'nearby');
     const html = renderToStaticMarkup(createElement(App));
     assert.ok(html.includes(heading) && html.includes(costLabel));
-    assert.match(html, /type="search"/);
+    assert.doesNotMatch(html, /type="search"|explore-search/);
     assert.match(html, /aria-pressed="true"/);
     assert.match(html, /<ol class="places-grid"/);
     assert.match(html, /Tempero da JU/);

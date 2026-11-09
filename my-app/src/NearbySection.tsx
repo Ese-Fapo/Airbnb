@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowDownWideNarrow, ArrowRight, Check, ExternalLink, MapPin, Navigation, Search, Ticket, Waves, X } from 'lucide-react'
+import { ArrowDownWideNarrow, ArrowRight, Check, ExternalLink, MapPin, Navigation, Ticket, Waves } from 'lucide-react'
 import './NearbySection.css'
 import { propertyAddress } from './data/property'
 import { places } from './data/places'
@@ -14,7 +14,7 @@ const ui = {
     eyebrow: 'YOUR LOCAL GUIDE', title: 'Find your next stop.',
     intro: 'A quick bite, a beach day or a little adventure. Explore from the guesthouse, starting with the closest places.',
     tabs: { all: 'All places', food: 'Food & coffee', essentials: 'Essentials', beaches: 'Beaches', sights: 'Things to see' },
-    search: 'Search places', placeholder: 'Try pizza, Palmas or Penha…', clear: 'Clear search', cost: 'Cost',
+    cost: 'Cost',
     filters: { all: 'Any cost', free: 'Free entry', paid: 'Paid' },
     costs: { free: 'Free entry', purchase: 'Paid · purchases', ticket: 'Paid · ticket' },
     sorted: 'Closest to farthest', results: 'places', from: 'from the guesthouse', approximate: 'Approx. road distance',
@@ -23,14 +23,14 @@ const ui = {
     costNote: 'Free entry excludes parking, food, shopping and optional activities. Check current ticket prices and hours before you go.',
     route: 'Get directions', details: 'Place details', map: 'View location', more: 'Explore more on Maps',
     water: 'Heading to the beach? Water quality can change after rain.', check: 'Check water quality',
-    empty: 'No places match your search.', emptyHint: 'Try another name or choose a different cost filter.', reset: 'Reset filters',
+    empty: 'No places match this cost filter.', emptyHint: 'Choose a different cost filter to see places in this category.', reset: 'Reset filters',
     showMore: 'Show more places', remaining: 'remaining', distanceSources: 'Distance estimates:',
   },
   pt: {
     eyebrow: 'SEU GUIA DA REGIÃO', title: 'Descubra sua próxima parada.',
     intro: 'Um lanche, um dia de praia ou uma nova aventura. Explore a partir da hospedagem, começando pelos lugares mais próximos.',
     tabs: { all: 'Todos os lugares', food: 'Comer e beber', essentials: 'Essenciais', beaches: 'Praias', sights: 'O que visitar' },
-    search: 'Buscar lugares', placeholder: 'Busque pizza, Palmas ou Penha…', clear: 'Limpar busca', cost: 'Custo',
+    cost: 'Custo',
     filters: { all: 'Qualquer custo', free: 'Entrada gratuita', paid: 'Pago' },
     costs: { free: 'Entrada gratuita', purchase: 'Pago · consumo', ticket: 'Pago · ingresso' },
     sorted: 'Do mais perto ao mais longe', results: 'lugares', from: 'da hospedagem', approximate: 'Distância aproximada por estrada',
@@ -39,14 +39,14 @@ const ui = {
     costNote: 'Entrada gratuita não inclui estacionamento, alimentação, compras ou atividades opcionais. Confira ingressos e horários atuais antes de sair.',
     route: 'Como chegar', details: 'Mais detalhes', map: 'Ver localização', more: 'Explore mais no Maps',
     water: 'Vai à praia? A balneabilidade pode mudar após chuvas.', check: 'Ver balneabilidade',
-    empty: 'Nenhum lugar corresponde à busca.', emptyHint: 'Tente outro nome ou escolha outro filtro de custo.', reset: 'Limpar filtros',
+    empty: 'Nenhum lugar corresponde a este filtro de custo.', emptyHint: 'Escolha outro filtro de custo para ver lugares nesta categoria.', reset: 'Limpar filtros',
     showMore: 'Mostrar mais lugares', remaining: 'restantes', distanceSources: 'Estimativas de distância:',
   },
   es: {
     eyebrow: 'TU GUÍA DE LA ZONA', title: 'Descubre tu próxima parada.',
     intro: 'Algo para comer, un día de playa o una nueva aventura. Explora desde el alojamiento, empezando por los lugares más cercanos.',
     tabs: { all: 'Todos los lugares', food: 'Comida y café', essentials: 'Servicios', beaches: 'Playas', sights: 'Qué visitar' },
-    search: 'Buscar lugares', placeholder: 'Busca pizza, Palmas o Penha…', clear: 'Borrar búsqueda', cost: 'Costo',
+    cost: 'Costo',
     filters: { all: 'Cualquier costo', free: 'Entrada gratuita', paid: 'De pago' },
     costs: { free: 'Entrada gratuita', purchase: 'De pago · consumo', ticket: 'De pago · entrada' },
     sorted: 'Del más cercano al más lejano', results: 'lugares', from: 'del alojamiento', approximate: 'Distancia aproximada por carretera',
@@ -55,7 +55,7 @@ const ui = {
     costNote: 'La entrada gratuita no incluye estacionamiento, comida, compras ni actividades opcionales. Consulta entradas y horarios actuales antes de salir.',
     route: 'Cómo llegar', details: 'Más detalles', map: 'Ver ubicación', more: 'Explora más en Maps',
     water: '¿Vas a la playa? La calidad del agua puede cambiar después de la lluvia.', check: 'Ver calidad del agua',
-    empty: 'Ningún lugar coincide con la búsqueda.', emptyHint: 'Prueba otro nombre o elige otro filtro de costo.', reset: 'Restablecer filtros',
+    empty: 'Ningún lugar coincide con este filtro de costo.', emptyHint: 'Elige otro filtro de costo para ver lugares en esta categoría.', reset: 'Restablecer filtros',
     showMore: 'Mostrar más lugares', remaining: 'restantes', distanceSources: 'Estimaciones de distancia:',
   },
 }
@@ -65,15 +65,14 @@ const costFilters: CostFilter[] = ['all', 'free', 'paid']
 
 export function NearbySection({ language }: { language: Language }) {
   const [category, setCategory] = useState<ExploreCategory>('all')
-  const [query, setQuery] = useState('')
   const [cost, setCost] = useState<CostFilter>('all')
   const [limit, setLimit] = useState(12)
   const t = ui[language]
-  const results = getExplorePlaces({ category, query, cost })
+  const results = getExplorePlaces({ category, cost })
   const total = Object.values(places).reduce((count, items) => count + items.length, 0)
   const locale = language === 'pt' ? 'pt-BR' : language === 'es' ? 'es' : 'en'
   const selectCategory = (value: ExploreCategory) => { setCategory(value); setLimit(12) }
-  const reset = () => { setQuery(''); setCost('all'); setLimit(12) }
+  const reset = () => { setCost('all'); setLimit(12) }
 
   return <section className="nearby-section section-wrap" id="explore" aria-labelledby="explore-heading">
     <div className="section-heading">
@@ -100,11 +99,6 @@ export function NearbySection({ language }: { language: Language }) {
         >{t.tabs[key]}<span>{key === 'all' ? total : places[key].length}</span></button>)}
       </div>
       <div className="explore-filter-row">
-        <div className="explore-search"><label htmlFor="explore-search">{t.search}</label>
-          <div><Search size={18} aria-hidden="true" /><input id="explore-search" type="search" value={query}
-            placeholder={t.placeholder} onChange={(event) => { setQuery(event.target.value); setLimit(12) }} />
-          {query && <button type="button" aria-label={t.clear} onClick={() => { setQuery(''); setLimit(12) }}><X size={17} /></button>}</div>
-        </div>
         <fieldset className="explore-cost-filter"><legend>{t.cost}</legend><div>
           {costFilters.map(value => <button key={value} type="button" aria-pressed={cost === value}
             className={cost === value ? 'active' : ''} onClick={() => { setCost(value); setLimit(12) }}>
@@ -139,7 +133,7 @@ export function NearbySection({ language }: { language: Language }) {
             <a href={place.source} aria-label={`${t.details}: ${place.name}`} target="_blank" rel="noreferrer">
               {place.source.includes('balneabilidade.ima.sc.gov.br') ? t.check : t.details}<ExternalLink size={14} aria-hidden="true" /></a></div>
         </li>)}
-      </ol> : <div className="explore-empty"><Search size={30} aria-hidden="true" /><h3>{t.empty}</h3><p>{t.emptyHint}</p><button type="button" onClick={reset}>{t.reset}</button></div>}
+      </ol> : <div className="explore-empty"><MapPin size={30} aria-hidden="true" /><h3>{t.empty}</h3><p>{t.emptyHint}</p><button type="button" onClick={reset}>{t.reset}</button></div>}
       {results.length > limit && <button type="button" className="explore-load-more" onClick={() => setLimit(value => value + 12)}>
         {t.showMore}<span>{results.length - limit} {t.remaining}</span><ArrowRight size={17} aria-hidden="true" /></button>}
     </div>

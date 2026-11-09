@@ -11,7 +11,6 @@ export type ExplorePlace = Place & {
 }
 
 const ticketedPlaces = new Set(['Beto Carrero World', 'Água Show Park', 'Fortaleza de São José da Ponta Grossa'])
-const normalize = (text: string) => text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim()
 
 const explorePlaces: ExplorePlace[] = (Object.entries(places) as [Category, Place[]][]).flatMap(([category, items]) =>
   items.map(place => ({
@@ -24,16 +23,13 @@ const explorePlaces: ExplorePlace[] = (Object.entries(places) as [Category, Plac
   })),
 )
 
-export function getExplorePlaces({ category = 'all', cost = 'all', query = '' }: {
+export function getExplorePlaces({ category = 'all', cost = 'all' }: {
   category?: ExploreCategory
   cost?: CostFilter
-  query?: string
 } = {}): ExplorePlace[] {
-  const search = normalize(query)
   return explorePlaces.filter(place =>
     (category === 'all' || place.category === category) &&
-    (cost === 'all' || (cost === 'free' ? place.cost === 'free' : place.cost !== 'free')) &&
-    (!search || normalize([place.name, place.location, place.type, ...Object.values(place.detail)].join(' ')).includes(search)),
+    (cost === 'all' || (cost === 'free' ? place.cost === 'free' : place.cost !== 'free')),
   ).sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity) ||
     Number(b.proximity === 'opposite') - Number(a.proximity === 'opposite') || a.name.localeCompare(b.name, 'pt-BR'))
 }
