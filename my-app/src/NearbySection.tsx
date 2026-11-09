@@ -1,54 +1,149 @@
 import { useState } from 'react'
-import { ArrowRight, ExternalLink, MapPin } from 'lucide-react'
+import { ArrowDownWideNarrow, ArrowRight, Check, ExternalLink, MapPin, Navigation, Search, Ticket, Waves, X } from 'lucide-react'
 import './NearbySection.css'
 import { propertyAddress } from './data/property'
-import { places, type Category } from './data/places'
+import { places } from './data/places'
+import { getExplorePlaces, type CostFilter, type ExploreCategory } from './data/explorePlanning'
 import type { Language } from './types'
 
-const origin = propertyAddress
-const directions = (destination: string) => `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}`
-const searchMore = (category: Category) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(category === 'food' ? 'restaurants near ' + origin : category === 'essentials' ? 'shops and services near ' + origin : category === 'beaches' ? 'beaches near Sao Jose Santa Catarina' : 'attractions near Sao Jose Santa Catarina')}`
+const directions = (destination: string) => `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(propertyAddress)}&destination=${encodeURIComponent(destination)}`
+const searchMore = (category: ExploreCategory) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(category === 'food' ? 'restaurants near ' + propertyAddress : category === 'essentials' ? 'shops and services near ' + propertyAddress : category === 'beaches' ? 'beaches near Sao Jose Santa Catarina' : 'attractions near Sao Jose Santa Catarina')}`
 
 const ui = {
-  en:{eyebrow:'EXPLORE THE AREA',title:'Around Real Parque.',intro:'Food, practical services, beaches and sightseeing around Real Parque. Routes open from the guesthouse; check current details before you go.',tabs:{food:'Food & coffee',essentials:'Essentials',beaches:'Beaches',sights:'Things to see'},route:'Get directions',details:'Place details',more:'See more on Maps',water:'Beach water quality can change after rain. Check the latest state report before swimming.',check:'Check water quality'},
-  pt:{eyebrow:'EXPLORE A REGIÃO',title:'Perto do Real Parque.',intro:'Comida, servi\u00e7os essenciais, praias e passeios perto do Real Parque. As rotas partem da hospedagem; confira os dados atuais antes de sair.',tabs:{food:'Comer e beber',essentials:'Essenciais',beaches:'Praias',sights:'O que visitar'},route:'Como chegar',details:'Mais detalhes',more:'Ver mais no Maps',water:'A balneabilidade pode mudar após chuvas. Confira o relatório estadual antes de entrar no mar.',check:'Ver balneabilidade'},
-  es:{eyebrow:'EXPLORA LA ZONA',title:'Cerca de Real Parque.',intro:'Comida, servicios esenciales, playas y paseos cerca de Real Parque. Las rutas salen del alojamiento; consulta los datos actuales antes de salir.',tabs:{food:'Comida y café',essentials:'Servicios',beaches:'Playas',sights:'Qué visitar'},route:'Cómo llegar',details:'Más detalles',more:'Ver más en Maps',water:'La calidad del agua puede cambiar después de la lluvia. Consulta el informe estatal antes de bañarte.',check:'Ver calidad del agua'},
+  en: {
+    eyebrow: 'YOUR LOCAL GUIDE', title: 'Find your next stop.',
+    intro: 'A quick bite, a beach day or a little adventure. Explore from the guesthouse, starting with the closest places.',
+    tabs: { all: 'All places', food: 'Food & coffee', essentials: 'Essentials', beaches: 'Beaches', sights: 'Things to see' },
+    search: 'Search places', placeholder: 'Try pizza, Palmas or Penha…', clear: 'Clear search', cost: 'Cost',
+    filters: { all: 'Any cost', free: 'Free entry', paid: 'Paid' },
+    costs: { free: 'Free entry', purchase: 'Paid · purchases', ticket: 'Paid · ticket' },
+    sorted: 'Closest to farthest', results: 'places', from: 'from the guesthouse', approximate: 'Approx. road distance',
+    sameStreet: 'Same street', opposite: 'Across the street', unknown: 'Check distance on Maps',
+    distanceNote: 'Approximate road distances. Some local stops use street locations; check Maps for the exact route.',
+    costNote: 'Free entry excludes parking, food, shopping and optional activities. Check current ticket prices and hours before you go.',
+    route: 'Get directions', details: 'Place details', map: 'View location', more: 'Explore more on Maps',
+    water: 'Heading to the beach? Water quality can change after rain.', check: 'Check water quality',
+    empty: 'No places match your search.', emptyHint: 'Try another name or choose a different cost filter.', reset: 'Reset filters',
+    showMore: 'Show more places', remaining: 'remaining', distanceSources: 'Distance estimates:',
+  },
+  pt: {
+    eyebrow: 'SEU GUIA DA REGIÃO', title: 'Descubra sua próxima parada.',
+    intro: 'Um lanche, um dia de praia ou uma nova aventura. Explore a partir da hospedagem, começando pelos lugares mais próximos.',
+    tabs: { all: 'Todos os lugares', food: 'Comer e beber', essentials: 'Essenciais', beaches: 'Praias', sights: 'O que visitar' },
+    search: 'Buscar lugares', placeholder: 'Busque pizza, Palmas ou Penha…', clear: 'Limpar busca', cost: 'Custo',
+    filters: { all: 'Qualquer custo', free: 'Entrada gratuita', paid: 'Pago' },
+    costs: { free: 'Entrada gratuita', purchase: 'Pago · consumo', ticket: 'Pago · ingresso' },
+    sorted: 'Do mais perto ao mais longe', results: 'lugares', from: 'da hospedagem', approximate: 'Distância aproximada por estrada',
+    sameStreet: 'Na mesma rua', opposite: 'Em frente à casa', unknown: 'Confira a distância no Maps',
+    distanceNote: 'Distâncias aproximadas por estrada. Alguns pontos locais usam a localização da rua; confira o trajeto exato no Maps.',
+    costNote: 'Entrada gratuita não inclui estacionamento, alimentação, compras ou atividades opcionais. Confira ingressos e horários atuais antes de sair.',
+    route: 'Como chegar', details: 'Mais detalhes', map: 'Ver localização', more: 'Explore mais no Maps',
+    water: 'Vai à praia? A balneabilidade pode mudar após chuvas.', check: 'Ver balneabilidade',
+    empty: 'Nenhum lugar corresponde à busca.', emptyHint: 'Tente outro nome ou escolha outro filtro de custo.', reset: 'Limpar filtros',
+    showMore: 'Mostrar mais lugares', remaining: 'restantes', distanceSources: 'Estimativas de distância:',
+  },
+  es: {
+    eyebrow: 'TU GUÍA DE LA ZONA', title: 'Descubre tu próxima parada.',
+    intro: 'Algo para comer, un día de playa o una nueva aventura. Explora desde el alojamiento, empezando por los lugares más cercanos.',
+    tabs: { all: 'Todos los lugares', food: 'Comida y café', essentials: 'Servicios', beaches: 'Playas', sights: 'Qué visitar' },
+    search: 'Buscar lugares', placeholder: 'Busca pizza, Palmas o Penha…', clear: 'Borrar búsqueda', cost: 'Costo',
+    filters: { all: 'Cualquier costo', free: 'Entrada gratuita', paid: 'De pago' },
+    costs: { free: 'Entrada gratuita', purchase: 'De pago · consumo', ticket: 'De pago · entrada' },
+    sorted: 'Del más cercano al más lejano', results: 'lugares', from: 'del alojamiento', approximate: 'Distancia aproximada por carretera',
+    sameStreet: 'En la misma calle', opposite: 'Frente a la casa', unknown: 'Consulta la distancia en Maps',
+    distanceNote: 'Distancias aproximadas por carretera. Algunos sitios locales usan la ubicación de la calle; consulta la ruta exacta en Maps.',
+    costNote: 'La entrada gratuita no incluye estacionamiento, comida, compras ni actividades opcionales. Consulta entradas y horarios actuales antes de salir.',
+    route: 'Cómo llegar', details: 'Más detalles', map: 'Ver ubicación', more: 'Explora más en Maps',
+    water: '¿Vas a la playa? La calidad del agua puede cambiar después de la lluvia.', check: 'Ver calidad del agua',
+    empty: 'Ningún lugar coincide con la búsqueda.', emptyHint: 'Prueba otro nombre o elige otro filtro de costo.', reset: 'Restablecer filtros',
+    showMore: 'Mostrar más lugares', remaining: 'restantes', distanceSources: 'Estimaciones de distancia:',
+  },
 }
 
-export function NearbySection({language}:{language:Language}) {
-  const [category,setCategory] = useState<Category>('food')
+const categories: ExploreCategory[] = ['all', 'food', 'essentials', 'beaches', 'sights']
+const costFilters: CostFilter[] = ['all', 'free', 'paid']
+
+export function NearbySection({ language }: { language: Language }) {
+  const [category, setCategory] = useState<ExploreCategory>('all')
+  const [query, setQuery] = useState('')
+  const [cost, setCost] = useState<CostFilter>('all')
+  const [limit, setLimit] = useState(12)
   const t = ui[language]
-  const categories: Category[] = ['food', 'essentials', 'beaches', 'sights']
-  const mapLabel = language === 'pt' ? 'Ver localização' : language === 'es' ? 'Ver ubicación' : 'View location'
-  return <section className="nearby-section section-wrap" id="explore">
-    <div className="section-heading"><div><span className="eyebrow">{t.eyebrow}</span><h2>{t.title}</h2></div><p>{t.intro}</p></div>
-    <div className="explore-tabs" role="tablist" aria-label={t.eyebrow}>{categories.map((key, index) => (
-      <button
-        key={key}
-        id={`explore-tab-${key}`}
-        role="tab"
-        aria-selected={category === key}
-        aria-controls="explore-panel"
-        tabIndex={category === key ? 0 : -1}
-        className={category === key ? 'selected' : ''}
-        onClick={() => setCategory(key)}
-        onKeyDown={(event) => {
-          let next: number;
-          if (event.key === 'ArrowRight') next = (index + 1) % categories.length;
-          else if (event.key === 'ArrowLeft') next = (index - 1 + categories.length) % categories.length;
-          else if (event.key === 'Home') next = 0;
-          else if (event.key === 'End') next = categories.length - 1;
-          else return;
-          event.preventDefault();
-          setCategory(categories[next]);
-          document.getElementById(`explore-tab-${categories[next]}`)?.focus();
-        }}
-      >{t.tabs[key]}<span>{places[key].length}</span></button>
-    ))}</div>
-    <div id="explore-panel" role="tabpanel" aria-labelledby={`explore-tab-${category}`} tabIndex={0}>
-    {category==='beaches'&&<div className="water-note"><p>{t.water}</p><a href="https://balneabilidade.ima.sc.gov.br/" target="_blank" rel="noreferrer">{t.check}<ExternalLink size={15}/></a></div>}
-    <div className="places-grid">{places[category].map((place,index)=><article className="place-card" key={place.name}><div className="place-top"><span>{String(index+1).padStart(2,'0')} / {language === 'en' ? place.type : t.tabs[category]}</span><MapPin size={18}/></div><h3>{place.name}</h3><p>{place.detail[language]}</p><div className="place-location"><MapPin size={15}/>{place.location}</div><div className="place-actions"><a href={place.mapUrl ?? directions(place.name+', '+place.location)} aria-label={`${place.mapUrl ? mapLabel : t.route}: ${place.name}`} target="_blank" rel="noreferrer">{place.mapUrl ? mapLabel : t.route}<ArrowRight size={16}/></a><a href={place.source} aria-label={`${t.details}: ${place.name}`} target="_blank" rel="noreferrer">{place.source.includes('balneabilidade.ima.sc.gov.br') ? t.check : t.details}<ExternalLink size={14}/></a></div></article>)}</div>
+  const results = getExplorePlaces({ category, query, cost })
+  const total = Object.values(places).reduce((count, items) => count + items.length, 0)
+  const locale = language === 'pt' ? 'pt-BR' : language === 'es' ? 'es' : 'en'
+  const selectCategory = (value: ExploreCategory) => { setCategory(value); setLimit(12) }
+  const reset = () => { setQuery(''); setCost('all'); setLimit(12) }
+
+  return <section className="nearby-section section-wrap" id="explore" aria-labelledby="explore-heading">
+    <div className="section-heading">
+      <div><span className="eyebrow">{t.eyebrow}</span><h2 id="explore-heading">{t.title}</h2></div>
+      <p>{t.intro}</p>
     </div>
-    <a className="explore-more" href={searchMore(category)} target="_blank" rel="noreferrer">{t.more}<ArrowRight size={17}/></a>
+    <div className="explore-controls">
+      <div className="explore-tabs" role="tablist" aria-label={t.eyebrow}>
+        {categories.map((key, index) => <button
+          key={key} id={`explore-tab-${key}`} role="tab" aria-selected={category === key}
+          aria-controls="explore-panel" tabIndex={category === key ? 0 : -1}
+          className={category === key ? 'selected' : ''} onClick={() => selectCategory(key)}
+          onKeyDown={(event) => {
+            let next: number
+            if (event.key === 'ArrowRight') next = (index + 1) % categories.length
+            else if (event.key === 'ArrowLeft') next = (index - 1 + categories.length) % categories.length
+            else if (event.key === 'Home') next = 0
+            else if (event.key === 'End') next = categories.length - 1
+            else return
+            event.preventDefault()
+            selectCategory(categories[next])
+            document.getElementById(`explore-tab-${categories[next]}`)?.focus()
+          }}
+        >{t.tabs[key]}<span>{key === 'all' ? total : places[key].length}</span></button>)}
+      </div>
+      <div className="explore-filter-row">
+        <div className="explore-search"><label htmlFor="explore-search">{t.search}</label>
+          <div><Search size={18} aria-hidden="true" /><input id="explore-search" type="search" value={query}
+            placeholder={t.placeholder} onChange={(event) => { setQuery(event.target.value); setLimit(12) }} />
+          {query && <button type="button" aria-label={t.clear} onClick={() => { setQuery(''); setLimit(12) }}><X size={17} /></button>}</div>
+        </div>
+        <fieldset className="explore-cost-filter"><legend>{t.cost}</legend><div>
+          {costFilters.map(value => <button key={value} type="button" aria-pressed={cost === value}
+            className={cost === value ? 'active' : ''} onClick={() => { setCost(value); setLimit(12) }}>
+            {cost === value && <Check size={13} aria-hidden="true" />}{t.filters[value]}
+          </button>)}
+        </div></fieldset>
+      </div>
+    </div>
+    <div id="explore-panel" role="tabpanel" aria-labelledby={`explore-tab-${category}`} tabIndex={0}>
+      <div className="explore-results-bar"><p role="status" aria-live="polite"><strong>{results.length}</strong> {t.results}</p>
+        <span><ArrowDownWideNarrow size={16} aria-hidden="true" />{t.sorted}</span></div>
+      <div className="explore-notes"><p><Navigation size={15} aria-hidden="true" />{t.distanceNote}</p><p><Ticket size={15} aria-hidden="true" />{t.costNote}</p></div>
+      {category === 'beaches' && <div className="water-note"><p><Waves size={19} aria-hidden="true" />{t.water}</p>
+        <a href="https://balneabilidade.ima.sc.gov.br/" target="_blank" rel="noreferrer">{t.check}<ExternalLink size={15} /></a></div>}
+      {results.length ? <ol className="places-grid" aria-label={t.sorted}>
+        {results.slice(0, limit).map((place, index) => <li className="place-card" key={place.name}>
+          <div className="place-top"><span className="place-category"><span className="place-rank">{String(index + 1).padStart(2, '0')}</span>{t.tabs[place.category]}</span>
+            <span className={`place-cost ${place.cost === 'free' ? 'free' : 'paid'}`}>{t.costs[place.cost]}</span></div>
+          <h3>{place.name}</h3>
+          <div className="place-distance" title={t.approximate}><Navigation size={15} aria-hidden="true" />
+            <strong>{place.proximity === 'opposite' ? t.opposite : place.proximity === 'street' ? t.sameStreet
+              : place.distanceKm === null ? t.unknown
+              : place.distanceKm < 0.1 ? '< 100 m'
+              : `≈ ${new Intl.NumberFormat(locale, { maximumFractionDigits: place.distanceKm < 10 ? 1 : 0 }).format(place.distanceKm)} km`}</strong>
+            {place.distanceKm !== null && !place.proximity && <span>{t.from}</span>}
+          </div>
+          <p>{place.detail[language]}</p>
+          <div className="place-location"><MapPin size={15} aria-hidden="true" />{place.location}</div>
+          <div className="place-actions"><a href={place.mapUrl ?? directions(place.name + ', ' + place.location)}
+            aria-label={`${place.mapUrl ? t.map : t.route}: ${place.name}`} target="_blank" rel="noreferrer">
+            {place.mapUrl ? t.map : t.route}<ArrowRight size={16} aria-hidden="true" /></a>
+            <a href={place.source} aria-label={`${t.details}: ${place.name}`} target="_blank" rel="noreferrer">
+              {place.source.includes('balneabilidade.ima.sc.gov.br') ? t.check : t.details}<ExternalLink size={14} aria-hidden="true" /></a></div>
+        </li>)}
+      </ol> : <div className="explore-empty"><Search size={30} aria-hidden="true" /><h3>{t.empty}</h3><p>{t.emptyHint}</p><button type="button" onClick={reset}>{t.reset}</button></div>}
+      {results.length > limit && <button type="button" className="explore-load-more" onClick={() => setLimit(value => value + 12)}>
+        {t.showMore}<span>{results.length - limit} {t.remaining}</span><ArrowRight size={17} aria-hidden="true" /></button>}
+    </div>
+    <a className="explore-more" href={searchMore(category)} target="_blank" rel="noreferrer">{t.more}<ExternalLink size={15} aria-hidden="true" /></a>
+    <p className="explore-data-credit">{t.distanceSources} <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap</a> · <a href="https://project-osrm.org/" target="_blank" rel="noreferrer">OSRM</a></p>
   </section>
 }

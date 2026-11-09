@@ -6,6 +6,8 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import App from '../src/App.tsx';
 import { pages, pageFromHash } from '../src/data/navigation.ts';
 import { places } from '../src/data/places.ts';
+import { getExplorePlaces } from '../src/data/explorePlanning.ts';
+import { exploreDistances } from '../src/data/exploreDistances.ts';
 import { propertyAddress, propertyMapUrl } from '../src/data/property.ts';
 import { hostWhatsappUrl } from '../src/data/contact.ts';
 import { Modal } from '../src/components/Modal.tsx';
@@ -119,6 +121,63 @@ test('Nearby recommendations have translated descriptions and valid source URLs'
   assert.ok(names.some((name) => name.startsWith('Praça do CEU')));
   for (const removed of ['Moreira', 'Big Bang', 'Uara', 'Afonso Burger', 'Villa Park', 'Somel', 'Ponto de ônibus', 'Unidade Básica', 'Auto Posto']) {
     assert.ok(names.every((name) => !name.includes(removed)), `Removed place returned: ${removed}`);
+  }
+});
+
+test('Explore includes every recommendation and sorts each view by road distance', () => {
+  const all = getExplorePlaces();
+  assert.equal(all.length, Object.values(places).flat().length);
+  assert.equal(all[0].name, 'Tempero da JU');
+  assert.equal(all.at(-1).name, 'Beto Carrero World');
+  for (const category of ['all', ...Object.keys(places)]) {
+    const items = getExplorePlaces({ category });
+    for (const [index, place] of items.entries()) {
+      const estimate = exploreDistances[place.name];
+      assert.ok(estimate, `Missing distance evidence: ${place.name}`);
+      assert.ok(Number.isFinite(place.distanceKm) && place.distanceKm >= 0);
+      assert.equal(new URL(estimate.source).protocol, 'https:');
+      if (index) assert.ok(items[index - 1].distanceKm <= place.distanceKm);
+      if (category !== 'all') assert.equal(place.category, category);
+    }
+  }
+});
+
+test('Explore cost filters distinguish free entry, purchases and tickets', () => {
+  const free = getExplorePlaces({ cost: 'free' });
+  const paid = getExplorePlaces({ cost: 'paid' });
+  assert.equal(free.length + paid.length, getExplorePlaces().length);
+  assert.ok(free.every(place => place.cost === 'free'));
+  assert.ok(paid.every(place => place.cost === 'purchase' || place.cost === 'ticket'));
+  assert.equal(getExplorePlaces({ category: 'food', cost: 'free' }).length, 0);
+  assert.equal(getExplorePlaces({ category: 'beaches', cost: 'paid' }).length, 0);
+  assert.deepEqual(getExplorePlaces({ category: 'sights', cost: 'paid' }).map(place => place.name), [
+    'Fortaleza de São José da Ponta Grossa', 'Água Show Park', 'Beto Carrero World',
+  ]);
+  assert.equal(getExplorePlaces({ query: 'Parceiros' })[0].category, 'food');
+});
+
+test('Explore search ignores accents and case and combines with category and cost', () => {
+  assert.ok(getExplorePlaces({ query: '  TINGUA  ' }).some(place => place.name === 'Praia do Tinguá'));
+  assert.deepEqual(getExplorePlaces({ query: 'Penha', cost: 'paid', category: 'sights' }).map(place => place.name), ['Beto Carrero World']);
+  assert.deepEqual(getExplorePlaces({ query: 'no-such-destination' }), []);
+  assert.equal(getExplorePlaces().length, Object.values(places).flat().length);
+});
+
+test('Explore initially exposes an accessible search, cost controls and the nearest places', () => {
+  for (const [language, heading, costLabel] of [
+    ['en', 'Closest to farthest', 'Any cost'],
+    ['pt', 'Do mais perto ao mais longe', 'Qualquer custo'],
+    ['es', 'Del más cercano al más lejano', 'Cualquier costo'],
+  ]) {
+    environment(language, 'nearby');
+    const html = renderToStaticMarkup(createElement(App));
+    assert.ok(html.includes(heading) && html.includes(costLabel));
+    assert.match(html, /type="search"/);
+    assert.match(html, /aria-pressed="true"/);
+    assert.match(html, /<ol class="places-grid"/);
+    assert.match(html, /Tempero da JU/);
+    assert.match(html, /Parceiros Conveniência/);
+    assert.equal((html.match(/class="place-card"/g) ?? []).length, 12);
   }
 });
 
