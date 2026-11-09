@@ -77,7 +77,12 @@ export function NearbySection({ language }: { language: Language }) {
   return <section className="nearby-section section-wrap" id="explore" aria-labelledby="explore-heading">
     <div className="section-heading">
       <div><span className="eyebrow">{t.eyebrow}</span><h2 id="explore-heading">{t.title}</h2></div>
-      <p>{t.intro}</p>
+      <p>{t.intro}<sup><a className="explore-note-link" href="#explore-notes" aria-label={`${t.distanceNote} ${t.costNote}`} onClick={(event) => {
+        event.preventDefault()
+        const notes = document.getElementById('explore-notes')
+        notes?.focus({ preventScroll: true })
+        notes?.scrollIntoView({ block: 'start' })
+      }}>*</a></sup></p>
     </div>
     <div className="explore-controls">
       <div className="explore-tabs" role="tablist" aria-label={t.eyebrow}>
@@ -110,7 +115,6 @@ export function NearbySection({ language }: { language: Language }) {
     <div id="explore-panel" role="tabpanel" aria-labelledby={`explore-tab-${category}`} tabIndex={0}>
       <div className="explore-results-bar"><p role="status" aria-live="polite"><strong>{results.length}</strong> {t.results}</p>
         <span><ArrowDownWideNarrow size={16} aria-hidden="true" />{t.sorted}</span></div>
-      <div className="explore-notes"><p><Navigation size={15} aria-hidden="true" />{t.distanceNote}</p><p><Ticket size={15} aria-hidden="true" />{t.costNote}</p></div>
       {category === 'beaches' && <div className="water-note"><p><Waves size={19} aria-hidden="true" />{t.water}</p>
         <a href="https://balneabilidade.ima.sc.gov.br/" target="_blank" rel="noreferrer">{t.check}<ExternalLink size={15} /></a></div>}
       {results.length ? <ol className="places-grid" aria-label={t.sorted}>
@@ -139,5 +143,6 @@ export function NearbySection({ language }: { language: Language }) {
     </div>
     <a className="explore-more" href={searchMore(category)} target="_blank" rel="noreferrer">{t.more}<ExternalLink size={15} aria-hidden="true" /></a>
     <p className="explore-data-credit">{t.distanceSources} <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap</a> · <a href="https://project-osrm.org/" target="_blank" rel="noreferrer">OSRM</a></p>
+    <div className="explore-notes" id="explore-notes" tabIndex={-1}><span aria-hidden="true">*</span><div><p><Navigation size={15} aria-hidden="true" />{t.distanceNote}</p><p><Ticket size={15} aria-hidden="true" />{t.costNote}</p></div></div>
   </section>
 }
