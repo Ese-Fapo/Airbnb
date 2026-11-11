@@ -6,7 +6,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import App from '../src/App.tsx';
 import { pages, pageFromHash } from '../src/data/navigation.ts';
 import { places } from '../src/data/places.ts';
-import { getExplorePlaces } from '../src/data/explorePlanning.ts';
+import { getExplorePlaces, getExploreResults } from '../src/data/explorePlanning.ts';
 import { exploreDistances } from '../src/data/exploreDistances.ts';
 import { propertyAddress, propertyMapUrl } from '../src/data/property.ts';
 import { hostWhatsappUrl } from '../src/data/contact.ts';
@@ -213,6 +213,41 @@ test('Explore search composes with filters and preserves nearest-first ordering'
   for (let i = 1; i < matching.length; i++) assert.ok(matching[i - 1].distanceKm <= matching[i].distanceKm);
 });
 
+test('Explore recovers common typos and swapped letters without broadening exact matches', () => {
+  for (const [query, intended] of [['cofee', 'coffee'], ['pizaa', 'pizza'], ['mercdao', 'mercado'], ['restarant', 'restaurant']]) {
+    const result = getExploreResults({ query });
+    assert.equal(result.approximate, true, query);
+    assert.ok(result.places.length > 0, query);
+    const intendedNames = new Set(getExplorePlaces({ query: intended }).map(place => place.name));
+    assert.ok(result.places.some(place => intendedNames.has(place.name)), query);
+  }
+  const exact = getExploreResults({ query: 'Tempero' });
+  assert.equal(exact.approximate, false);
+  assert.deepEqual(exact.places.map(place => place.name), ['Tempero da JU']);
+  assert.deepEqual(getExplorePlaces({ query: 'zzzzzzzzzz' }), []);
+  assert.deepEqual(getExplorePlaces({ query: '999999' }), []);
+  assert.deepEqual(getExplorePlaces({ query: 'pizaa', category: 'beaches' }), []);
+  assert.deepEqual(getExplorePlaces({ query: 'pizaa', cost: 'free' }), []);
+});
+
+test('Explore understands simple search intent in each language', () => {
+  for (const query of ['I want to find pizza near me', 'quero encontrar pizza perto de mim', 'quiero buscar pizza cerca de mi']) {
+    assert.deepEqual(getExplorePlaces({ query }), getExplorePlaces({ query: 'pizza' }));
+  }
+});
+
+test('Dinner searches include pizza and burger venues in all supported languages', () => {
+  const expected = ['Thiago Pizza e Lanches', 'LaBrava Pizzaria', 'Alemão Lanches e Porções', 'Cesar Gourmet — Ipiranga'];
+  for (const query of ['dinner', 'jantar', 'cena', 'diner', 'I want dinner near me']) {
+    const result = getExplorePlaces({ query });
+    for (const name of expected) assert.ok(result.some(place => place.name === name), `${query}: missing ${name}`);
+    assert.ok(result.every(place => place.category === 'food'));
+    assert.ok(!result.some(place => place.name === 'Tempero da JU'), 'Lunch-only venues should not be tagged as dinner');
+  }
+  assert.deepEqual(getExplorePlaces({ query: 'dinner', cost: 'free' }), []);
+  assert.deepEqual(getExplorePlaces({ query: 'dinner', category: 'beaches' }), []);
+});
+
 test('Explore exposes live search, cost controls and the nearest places', () => {
   for (const [language, heading, costLabel] of [
     ['en', 'Closest to farthest', 'Any cost'],
@@ -225,6 +260,7 @@ test('Explore exposes live search, cost controls and the nearest places', () => 
     assert.match(html, /type="search"/);
     assert.match(html, /role="search"/);
     assert.match(html, /aria-describedby="explore-search-hint"/);
+    assert.match(html, /type="submit" class="explore-search-submit"/);
     assert.match(html, /aria-pressed="true"/);
     assert.match(html, /<ol class="places-grid"/);
     assert.match(html, /Tempero da JU/);

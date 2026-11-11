@@ -1,9 +1,9 @@
 import { useRef, useState } from 'react'
-import { ArrowDownWideNarrow, ArrowRight, Check, ExternalLink, MapPin, Navigation, Search, Ticket, Waves, X } from 'lucide-react'
+import { ArrowDownWideNarrow, ArrowRight, Check, CornerDownLeft, ExternalLink, MapPin, Navigation, Search, Ticket, Waves, X } from 'lucide-react'
 import './NearbySection.css'
 import { propertyAddress } from './data/property'
 import { places } from './data/places'
-import { getExplorePlaces, type CostFilter, type ExploreCategory } from './data/explorePlanning'
+import { getExploreResults, type CostFilter, type ExploreCategory } from './data/explorePlanning'
 import type { Language } from './types'
 
 const directions = (destination: string) => `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(propertyAddress)}&destination=${encodeURIComponent(destination)}`
@@ -14,7 +14,7 @@ const ui = {
     eyebrow: 'YOUR LOCAL GUIDE', title: 'Find your next stop.',
     intro: 'A quick bite, a beach day or a little adventure. Explore from the guesthouse, starting with the closest places.',
     tabs: { all: 'All places', food: 'Food & coffee', essentials: 'Essentials', beaches: 'Beaches', sights: 'Things to see' },
-    cost: 'Cost', search: 'Search nearby places', placeholder: 'Name, neighborhood, food or beach…', clearSearch: 'Clear search', searchHint: 'Results update as you type.', matching: 'matching',
+    cost: 'Cost', search: 'Search nearby places', placeholder: 'Name, neighborhood, food or beach…', clearSearch: 'Clear search', submit: 'Search places', approximateSearch: 'No exact matches. Showing close spelling matches.', searchHint: 'Type to search, then tap ↵ or press Enter to view results.', matching: 'matching',
     filters: { all: 'Any cost', free: 'Free entry', paid: 'Paid' },
     costs: { free: 'Free entry', purchase: 'Paid · purchases', ticket: 'Paid · ticket' },
     sorted: 'Closest to farthest', results: 'places', from: 'from the guesthouse', approximate: 'Approx. road distance',
@@ -30,7 +30,7 @@ const ui = {
     eyebrow: 'SEU GUIA DA REGIÃO', title: 'Descubra sua próxima parada.',
     intro: 'Um lanche, um dia de praia ou uma nova aventura. Explore a partir da hospedagem, começando pelos lugares mais próximos.',
     tabs: { all: 'Todos os lugares', food: 'Comer e beber', essentials: 'Essenciais', beaches: 'Praias', sights: 'O que visitar' },
-    cost: 'Custo', search: 'Buscar lugares por perto', placeholder: 'Nome, bairro, comida ou praia…', clearSearch: 'Limpar busca', searchHint: 'Os resultados aparecem enquanto você digita.', matching: 'para',
+    cost: 'Custo', search: 'Buscar lugares por perto', placeholder: 'Nome, bairro, comida ou praia…', clearSearch: 'Limpar busca', submit: 'Buscar lugares', approximateSearch: 'Sem resultados exatos. Mostrando nomes e termos parecidos.', searchHint: 'Digite para buscar e toque em ↵ ou pressione Enter para ver os resultados.', matching: 'para',
     filters: { all: 'Qualquer custo', free: 'Entrada gratuita', paid: 'Pago' },
     costs: { free: 'Entrada gratuita', purchase: 'Pago · consumo', ticket: 'Pago · ingresso' },
     sorted: 'Do mais perto ao mais longe', results: 'lugares', from: 'da hospedagem', approximate: 'Distância aproximada por estrada',
@@ -46,7 +46,7 @@ const ui = {
     eyebrow: 'TU GUÍA DE LA ZONA', title: 'Descubre tu próxima parada.',
     intro: 'Algo para comer, un día de playa o una nueva aventura. Explora desde el alojamiento, empezando por los lugares más cercanos.',
     tabs: { all: 'Todos los lugares', food: 'Comida y café', essentials: 'Servicios', beaches: 'Playas', sights: 'Qué visitar' },
-    cost: 'Costo', search: 'Buscar lugares cercanos', placeholder: 'Nombre, barrio, comida o playa…', clearSearch: 'Borrar búsqueda', searchHint: 'Los resultados se actualizan mientras escribes.', matching: 'para',
+    cost: 'Costo', search: 'Buscar lugares cercanos', placeholder: 'Nombre, barrio, comida o playa…', clearSearch: 'Borrar búsqueda', submit: 'Buscar lugares', approximateSearch: 'Sin coincidencias exactas. Mostrando términos similares.', searchHint: 'Escribe para buscar y toca ↵ o pulsa Enter para ver los resultados.', matching: 'para',
     filters: { all: 'Cualquier costo', free: 'Entrada gratuita', paid: 'De pago' },
     costs: { free: 'Entrada gratuita', purchase: 'De pago · consumo', ticket: 'De pago · entrada' },
     sorted: 'Del más cercano al más lejano', results: 'lugares', from: 'del alojamiento', approximate: 'Distancia aproximada por carretera',
@@ -69,8 +69,9 @@ export function NearbySection({ language }: { language: Language }) {
   const [limit, setLimit] = useState(12)
   const [query, setQuery] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
+  const resultsRef = useRef<HTMLDivElement>(null)
   const t = ui[language]
-  const results = getExplorePlaces({ category, cost, query })
+  const { places: results, approximate } = getExploreResults({ category, cost, query })
   const total = Object.values(places).reduce((count, items) => count + items.length, 0)
   const locale = language === 'pt' ? 'pt-BR' : language === 'es' ? 'es' : 'en'
   const selectCategory = (value: ExploreCategory) => { setCategory(value); setLimit(12) }
@@ -88,15 +89,22 @@ export function NearbySection({ language }: { language: Language }) {
       }}>*</a></sup></p>
     </div>
     <div className="explore-controls">
-      <form role="search" className="explore-search" aria-label={t.search} onSubmit={(event) => event.preventDefault()}>
+      <form role="search" className="explore-search" aria-label={t.search} onSubmit={(event) => {
+        event.preventDefault()
+        setLimit(12)
+        searchRef.current?.blur()
+        resultsRef.current?.focus({ preventScroll: true })
+        resultsRef.current?.scrollIntoView({ block: 'start' })
+      }}>
         <label htmlFor="explore-search-input">{t.search}</label>
         <div className="explore-search-field">
           <Search size={20} aria-hidden="true" />
-          <input ref={searchRef} id="explore-search-input" type="search" value={query} placeholder={t.placeholder}
+          <input ref={searchRef} id="explore-search-input" type="search" value={query} placeholder={t.placeholder} maxLength={160}
             aria-controls="explore-panel" aria-describedby="explore-search-hint" autoComplete="off" enterKeyHint="search"
             onChange={(event) => { setQuery(event.target.value); setLimit(12) }}
             onKeyDown={(event) => { if (event.key === 'Escape') { event.preventDefault(); clearSearch() } }} />
           {query && <button type="button" onClick={clearSearch} aria-label={t.clearSearch}><X size={18} aria-hidden="true" /></button>}
+          <button type="submit" className="explore-search-submit" aria-label={t.submit} title={t.submit}><CornerDownLeft size={21} aria-hidden="true" /></button>
         </div>
         <p id="explore-search-hint">{t.searchHint}</p>
       </form>
@@ -127,9 +135,10 @@ export function NearbySection({ language }: { language: Language }) {
         </div></fieldset>
       </div>
     </div>
-    <div id="explore-panel" role="tabpanel" aria-labelledby={`explore-tab-${category}`} tabIndex={0}>
+    <div ref={resultsRef} id="explore-panel" role="tabpanel" aria-labelledby={`explore-tab-${category}`} tabIndex={0}>
       <div className="explore-results-bar"><p role="status" aria-live="polite" aria-atomic="true"><strong>{results.length}</strong> {t.results}{query.trim() && <> {t.matching} “{query.trim()}”</>}</p>
         <span><ArrowDownWideNarrow size={16} aria-hidden="true" />{t.sorted}</span></div>
+      {approximate && <p className="explore-search-approximate">{t.approximateSearch}</p>}
       {category === 'beaches' && <div className="water-note"><p><Waves size={19} aria-hidden="true" />{t.water}</p>
         <a href="https://balneabilidade.ima.sc.gov.br/" target="_blank" rel="noreferrer">{t.check}<ExternalLink size={15} /></a></div>}
       {results.length ? <ol className="places-grid" aria-label={t.sorted}>
