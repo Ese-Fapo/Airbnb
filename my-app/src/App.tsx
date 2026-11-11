@@ -28,6 +28,7 @@ import {
 
 import { BottomNavigation } from "./components/BottomNavigation";
 import { InstallPrompt } from "./components/InstallPrompt";
+import { ShareButton } from "./components/ShareButton";
 import { LanguageSwitcher } from "./components/LanguageSwitcher";
 import { MobileMenu } from "./components/MobileMenu";
 import { Modal } from "./components/Modal";
@@ -608,7 +609,9 @@ function HomePage({
 
           {/* TOP */}
 
-          <div className="flex items-center justify-end">
+          <div className="flex items-center justify-end gap-2">
+
+            <ShareButton language={language} variant="hero" />
 
             <LanguageSwitcher
               language={language}

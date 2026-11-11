@@ -11,6 +11,39 @@ import { exploreDistances } from '../src/data/exploreDistances.ts';
 import { propertyAddress, propertyMapUrl } from '../src/data/property.ts';
 import { hostWhatsappUrl } from '../src/data/contact.ts';
 import { Modal } from '../src/components/Modal.tsx';
+import { guestGuideUrl, shareGuestGuide } from '../src/data/sharing.ts';
+
+test('Sharing always sends the public homepage URL', async () => {
+  environment('en', 'wifi');
+  let shared;
+  navigator.share = async (data) => { shared = data; };
+  navigator.canShare = () => true;
+  assert.equal(await shareGuestGuide('Guest guide', 'Welcome'), 'shared');
+  assert.deepEqual(shared, { title: 'Guest guide', text: 'Welcome', url: 'https://airbnb-xi-sepia.vercel.app/' });
+  assert.equal(shared.url, guestGuideUrl);
+});
+
+test('Sharing handles unsupported devices, cancellation and platform errors', async () => {
+  environment();
+  assert.equal(await shareGuestGuide('Guide', 'Welcome'), 'unavailable');
+  navigator.share = async () => { throw new DOMException('Closed', 'AbortError'); };
+  assert.equal(await shareGuestGuide('Guide', 'Welcome'), 'cancelled');
+  navigator.share = async () => { throw new Error('Permission denied'); };
+  assert.equal(await shareGuestGuide('Guide', 'Welcome'), 'unavailable');
+  navigator.canShare = () => false;
+  navigator.share = async () => { assert.fail('Unsupported data should not be shared'); };
+  assert.equal(await shareGuestGuide('Guide', 'Welcome'), 'unavailable');
+});
+
+test('Every page exposes a translated accessible share action', () => {
+  for (const [language, label] of [['en', 'Share guest guide'], ['pt', 'Compartilhar guia'], ['es', 'Compartir guía']]) {
+    for (const page of pages) {
+      environment(language, page);
+      const html = renderToStaticMarkup(createElement(App));
+      assert.ok(html.includes(`aria-label="${label}"`), `${language}: ${page} needs a share button`);
+    }
+  }
+});
 
 function environment(language = 'pt', page = 'home', storageBlocked = false) {
   const navigator = { languages: [language], language, userAgent: 'test', platform: 'test', maxTouchPoints: 0 };
@@ -156,7 +189,31 @@ test('Explore cost filters distinguish free entry, purchases and tickets', () =>
   assert.ok(getExplorePlaces({ category: 'food' }).some(place => place.name === 'Parceiros Conveniência'));
 });
 
-test('Explore exposes cost controls and the nearest places without a search box', () => {
+test('Explore search matches names, addresses, descriptions and translated categories', () => {
+  const names = (query) => getExplorePlaces({ query }).map(place => place.name);
+  assert.ok(names('  TEMPERO   ju  ').includes('Tempero da JU'));
+  assert.deepEqual(names('sao jose'), names('São José'));
+  assert.deepEqual(names('cafe'), names('CAFÉ'));
+  assert.ok(names('across').includes('Tempero da JU') === false);
+  assert.ok(names('opposite').includes('Tempero da JU'));
+  assert.ok(names('ipiranga').length > 0);
+  for (const query of ['beaches', 'praias', 'playas']) {
+    assert.deepEqual(getExplorePlaces({ query }), getExplorePlaces({ category: 'beaches' }));
+  }
+  assert.deepEqual(getExplorePlaces({ query: '    ' }), getExplorePlaces());
+  assert.deepEqual(getExplorePlaces({ query: 'zzzz-no-such-place' }), []);
+});
+
+test('Explore search composes with filters and preserves nearest-first ordering', () => {
+  assert.deepEqual(getExplorePlaces({ query: 'Tempero', cost: 'free' }), []);
+  assert.deepEqual(getExplorePlaces({ query: 'Tempero', category: 'beaches' }), []);
+  assert.equal(getExplorePlaces({ query: 'Tempero', category: 'food', cost: 'paid' })[0].name, 'Tempero da JU');
+  const matching = getExplorePlaces({ query: 'São José' });
+  assert.ok(matching.length > 1);
+  for (let i = 1; i < matching.length; i++) assert.ok(matching[i - 1].distanceKm <= matching[i].distanceKm);
+});
+
+test('Explore exposes live search, cost controls and the nearest places', () => {
   for (const [language, heading, costLabel] of [
     ['en', 'Closest to farthest', 'Any cost'],
     ['pt', 'Do mais perto ao mais longe', 'Qualquer custo'],
@@ -165,7 +222,9 @@ test('Explore exposes cost controls and the nearest places without a search box'
     environment(language, 'nearby');
     const html = renderToStaticMarkup(createElement(App));
     assert.ok(html.includes(heading) && html.includes(costLabel));
-    assert.doesNotMatch(html, /type="search"|explore-search/);
+    assert.match(html, /type="search"/);
+    assert.match(html, /role="search"/);
+    assert.match(html, /aria-describedby="explore-search-hint"/);
     assert.match(html, /aria-pressed="true"/);
     assert.match(html, /<ol class="places-grid"/);
     assert.match(html, /Tempero da JU/);
@@ -200,4 +259,25 @@ test('Public app icons exist and the page shell has no stray body text', () => {
   for (const name of ['favicon.png', 'apple-touch-icon.png', 'icon-192.png', 'icon.png', 'icon-maskable.png']) {
     assert.ok(existsSync(new URL(`../public/${name}`, import.meta.url)), `Missing icon: ${name}`);
   }
+});
+
+test('Link previews expose the app name, description and public icon without JavaScript', () => {
+  const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+  const head = html.split('</head>')[0];
+  const meta = (key) => head.match(new RegExp(`<meta (?:property|name)="${key}" content="([^"]+)"`))?.[1];
+  assert.equal(meta('og:url'), guestGuideUrl);
+  assert.equal(meta('og:type'), 'website');
+  assert.match(meta('og:title'), /Hospedaria Real Parque/);
+  assert.ok(meta('og:description').length > 40);
+  assert.equal(meta('og:image'), `${guestGuideUrl}icon.png`);
+  assert.equal(meta('og:image:type'), 'image/png');
+  assert.equal(meta('og:image:width'), '512');
+  assert.equal(meta('og:image:height'), '512');
+  assert.ok(meta('og:image:alt'));
+  assert.equal(meta('twitter:card'), 'summary');
+  for (const key of ['title', 'description', 'image', 'image:alt']) {
+    assert.equal(meta(`twitter:${key}`), meta(`og:${key}`));
+  }
+  const image = new URL(meta('og:image'));
+  assert.ok(existsSync(new URL(`../public${image.pathname}`, import.meta.url)));
 });

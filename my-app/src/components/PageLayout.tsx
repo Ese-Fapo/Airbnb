@@ -3,6 +3,7 @@ import { ArrowLeft } from "lucide-react";
 
 import type { Language, Page, Translation } from "../types";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { ShareButton } from "./ShareButton";
 
 export function PageLayout({
   title,
@@ -34,7 +35,10 @@ export function PageLayout({
           <ArrowLeft size={19} />
         </button>
 
-        <h1 className="col-span-2 row-start-2 min-w-0 text-center text-sm font-bold sm:text-base md:col-span-1 md:row-start-auto">{title}</h1>
+        <div className="col-span-2 row-start-2 flex min-w-0 items-center justify-center gap-3 md:col-span-1 md:row-start-auto">
+          <h1 className="min-w-0 text-center text-sm font-bold sm:text-base">{title}</h1>
+          {language && <ShareButton language={language} />}
+        </div>
 
         {t && language && setLanguage ? (
           <div className="justify-self-end"><LanguageSwitcher language={language} setLanguage={setLanguage} t={t} /></div>

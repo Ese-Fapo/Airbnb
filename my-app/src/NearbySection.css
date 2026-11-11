@@ -6,6 +6,19 @@
 .nearby-section h2{font-size:clamp(34px,5vw,50px);line-height:1.1;font-weight:500;margin:8px 0 0}
 .nearby-section .section-heading>p{max-width:340px;color:#58665d;line-height:1.7;font-size:13px;margin:0}
 .explore-controls{background:#fff;border:1px solid #dce5dc;border-radius:18px;padding:18px 20px;box-shadow:0 5px 22px #1d3a2505}
+.explore-search{margin:0 0 20px;min-width:0}
+.explore-search>label{display:block;margin-bottom:8px;font-size:13px;font-weight:700;color:#254b38}
+.explore-search-field{display:flex;align-items:center;gap:10px;min-height:52px;padding:3px 5px 3px 14px;border:1px solid #b9cbb8;border-radius:12px;background:#f8faf6;transition:border-color .15s,box-shadow .15s}
+.explore-search-field:focus-within{border-color:#254b38;box-shadow:0 0 0 3px #254b381a;background:#fff}
+.explore-search-field>svg{flex-shrink:0;color:#5a765e}
+.explore-search-field input{flex:1;min-width:0;width:100%;min-height:44px;border:0;outline:none;background:transparent;color:#21372d;font:inherit;font-size:16px;padding:8px 0;border-radius:4px}
+.explore-search-field input::placeholder{color:#687b6b;opacity:1}
+.explore-search-field input::-webkit-search-cancel-button{-webkit-appearance:none}
+.explore-search-field button{display:grid;place-items:center;flex-shrink:0;width:44px;height:44px;border:0;border-radius:8px;background:transparent;color:#47634c}
+.explore-search-field button:hover{background:#e5ece3}
+.explore-search>p{font-size:11px;color:#5a6d5e;margin:7px 0 0;line-height:1.5}
+.explore-results-bar>p{min-width:0;overflow-wrap:anywhere}.explore-results-bar>span{flex-shrink:0}
+@media(max-width:600px){.explore-results-bar{align-items:flex-start;flex-wrap:wrap}.explore-search-field{gap:8px;padding-left:10px}.explore-search-field input::placeholder{font-size:14px}}
 .explore-tabs{display:flex;gap:7px;overflow-x:auto;padding:3px 3px 15px;border-bottom:1px solid #e7ece6;margin:0 -3px 17px;scrollbar-width:thin}
 .explore-tabs button{flex-shrink:0;display:flex;align-items:center;gap:9px;border:1px solid transparent;background:#f2f5f0;color:#3d5546;border-radius:999px;padding:10px 13px;min-height:44px;font-size:12px;font-weight:700;transition:background .15s}
 .explore-tabs button:hover{background:#e5ece3}.explore-tabs button.selected{background:#254b38;color:#fff}

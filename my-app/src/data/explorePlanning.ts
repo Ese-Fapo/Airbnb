@@ -23,13 +23,27 @@ const explorePlaces: ExplorePlace[] = (Object.entries(places) as [Category, Plac
   })),
 )
 
-export function getExplorePlaces({ category = 'all', cost = 'all' }: {
+const normalizeSearch = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
+const categoryKeywords: Record<Category, string> = {
+  food: 'food coffee restaurant cafe comer beber comida restaurante café',
+  essentials: 'essentials essenciais servicios services shops groceries compras mercado supermercado farmácia pharmacy',
+  beaches: 'beaches beach praia praias playa playas',
+  sights: 'sights attractions things to see atrações turismo o que visitar qué visitar',
+}
+const searchIndex = new Map(explorePlaces.map(place => [place.name, normalizeSearch([
+  place.name, place.location, place.type, ...Object.values(place.detail), categoryKeywords[place.category],
+].join(' '))]))
+
+export function getExplorePlaces({ category = 'all', cost = 'all', query = '' }: {
   category?: ExploreCategory
   cost?: CostFilter
+  query?: string
 } = {}): ExplorePlace[] {
+  const terms = normalizeSearch(query).split(' ').filter(Boolean)
   return explorePlaces.filter(place =>
     (category === 'all' || place.category === category) &&
-    (cost === 'all' || (cost === 'free' ? place.cost === 'free' : place.cost !== 'free')),
+    (cost === 'all' || (cost === 'free' ? place.cost === 'free' : place.cost !== 'free')) &&
+    terms.every(term => searchIndex.get(place.name)?.includes(term)),
   ).sort((a, b) => (a.distanceKm ?? Infinity) - (b.distanceKm ?? Infinity) ||
     Number(b.proximity === 'opposite') - Number(a.proximity === 'opposite') || a.name.localeCompare(b.name, 'pt-BR'))
 }
