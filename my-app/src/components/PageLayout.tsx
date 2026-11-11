@@ -26,7 +26,7 @@ export function PageLayout({
 }) {
   return (
     <main id="main-content" tabIndex={-1} className="mx-auto min-h-screen w-full max-w-6xl bg-[#f7f7f2] px-4 pb-[calc(env(safe-area-inset-bottom)+8rem)] shadow-2xl max-[360px]:px-3 md:my-4 md:rounded-2xl md:px-6 md:pb-36">
-      <header className="sticky top-0 z-20 -mx-4 mb-5 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 bg-[#f7f7f2]/95 px-4 py-3 backdrop-blur max-[360px]:-mx-3 max-[360px]:px-3 md:-mx-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:px-6 md:py-4">
+      <header className="app-page-header sticky top-0 z-20 -mx-4 mb-5 grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 bg-[#f7f7f2]/95 px-4 py-3 backdrop-blur max-[360px]:-mx-3 max-[360px]:px-3 md:-mx-6 md:grid-cols-[auto_minmax(0,1fr)_auto] md:px-6 md:py-4">
         <button
           onClick={onBack ?? (() => navigate(backPage))}
           aria-label={language === "pt" ? "Voltar" : language === "es" ? "Volver" : "Back"}

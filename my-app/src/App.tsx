@@ -539,6 +539,7 @@ function App() {
         aria-controls={menuOpen ? "guest-menu" : undefined}
         aria-haspopup="dialog"
         className="
+          app-menu-button
           fixed
           top-4
           left-4
@@ -609,7 +610,7 @@ function HomePage({
 
           {/* TOP */}
 
-          <div className="flex items-center justify-end gap-2">
+          <div className="app-hero-actions flex items-center justify-end gap-2">
 
             <ShareButton language={language} variant="hero" />
 
@@ -774,9 +775,9 @@ function HomePage({
         </div>
 
         <div className="mt-5">
-          <div className="mb-3 flex items-center justify-between">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
             <h3 className="text-base font-bold">{language === "pt" ? "Mais espaços da casa" : language === "es" ? "Más espacios de la casa" : "More of the home"}</h3>
-            <button onClick={() => navigate("photos")} className="text-xs font-semibold text-[#c91e40]">{photoActionLabel}</button>
+            <button onClick={() => navigate("photos")} className="min-h-11 shrink-0 px-2 text-xs font-semibold text-[#c91e40]">{photoActionLabel}</button>
           </div>
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             {[
@@ -923,11 +924,11 @@ function PhotoGalleryPage({
             if (event.key === "ArrowLeft") { event.preventDefault(); setSelectedPhoto((selectedPhoto - 1 + propertyPhotos.length) % propertyPhotos.length); }
             if (event.key === "ArrowRight") { event.preventDefault(); setSelectedPhoto((selectedPhoto + 1) % propertyPhotos.length); }
           }}>
-          <button onClick={() => setSelectedPhoto(null)} aria-label={t.close} className="absolute right-4 top-4 rounded-lg bg-white/15 p-3 text-white"><X size={22} /></button>
+          <button onClick={() => setSelectedPhoto(null)} aria-label={t.close} className="app-photo-close absolute right-4 top-4 rounded-lg bg-white/15 p-3 text-white"><X size={22} /></button>
           <button onClick={() => setSelectedPhoto((selectedPhoto - 1 + propertyPhotos.length) % propertyPhotos.length)} aria-label={t.previousPhoto} className="absolute left-2 top-1/2 rounded-lg bg-white/15 p-3 text-white sm:left-6"><ChevronLeft size={25} /></button>
-          <img src={propertyPhotos[selectedPhoto].src} alt={propertyPhotos[selectedPhoto].title[language]} className="max-h-[78svh] max-w-[88vw] object-contain" />
+          <img src={propertyPhotos[selectedPhoto].src} alt={propertyPhotos[selectedPhoto].title[language]} className="app-photo-image max-w-[88vw] object-contain" />
           <button onClick={() => setSelectedPhoto((selectedPhoto + 1) % propertyPhotos.length)} aria-label={t.nextPhoto} className="absolute right-2 top-1/2 rounded-lg bg-white/15 p-3 text-white sm:right-6"><ChevronRight size={25} /></button>
-          <p className="absolute bottom-5 left-4 right-4 text-center text-sm font-semibold text-white">{selectedPhoto + 1} / {propertyPhotos.length} · {propertyPhotos[selectedPhoto].title[language]}</p>
+          <p className="app-photo-caption absolute bottom-5 left-4 right-4 text-center text-sm font-semibold text-white">{selectedPhoto + 1} / {propertyPhotos.length} · {propertyPhotos[selectedPhoto].title[language]}</p>
           </div>
         </Modal>
       )}

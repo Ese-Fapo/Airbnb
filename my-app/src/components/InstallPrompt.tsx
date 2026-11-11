@@ -83,7 +83,7 @@ export function InstallPrompt({ language }: { language: Language }) {
   return (
     <aside
       aria-label={labels[language].install}
-      className="fixed bottom-24 right-4 z-40 max-w-[calc(100vw-2rem)] rounded-xl border border-[#ffd6de] bg-white p-2 shadow-xl"
+      className="app-install-prompt fixed bottom-24 right-4 z-40 max-w-[calc(100vw-2rem)] rounded-xl border border-[#ffd6de] bg-white p-2 shadow-xl"
     >
       <div className="flex items-center gap-2">
         <button

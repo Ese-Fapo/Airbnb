@@ -26,7 +26,7 @@ export function BottomNavigation({
   ];
 
   return (
-    <nav className="fixed bottom-0 left-1/2 z-30 w-full max-w-6xl -translate-x-1/2 border-t border-[#e4e6dc] bg-white/95 px-2 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 shadow-[0_-5px_25px_rgba(0,0,0,0.05)] backdrop-blur sm:px-4">
+    <nav className="app-bottom-navigation fixed bottom-0 left-1/2 z-30 w-full max-w-6xl -translate-x-1/2 border-t border-[#e4e6dc] bg-white/95 px-2 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 shadow-[0_-5px_25px_rgba(0,0,0,0.05)] backdrop-blur sm:px-4">
       <div className="grid grid-cols-4">
         <BottomItem active={page === "home"} icon={<Home />} label={t.home} onClick={() => navigate("home")} />
         <BottomItem active={guidePages.includes(page)} icon={<FileText />} label={t.guide} onClick={() => navigate("guide")} />

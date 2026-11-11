@@ -31,7 +31,7 @@ export function MobileMenu({
 
   return (
     <Modal id="guest-menu" label={t.guestGuide} onClose={close} className="backdrop:backdrop-blur-sm">
-      <div className="absolute bottom-0 left-0 right-0 max-h-[calc(100svh-1rem)] overflow-y-auto rounded-t-[1.5rem] bg-[#f7f7f2] p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] sm:p-6">
+      <div className="absolute bottom-0 left-0 right-0 max-h-[calc(100dvh-env(safe-area-inset-top)-1rem)] overflow-y-auto rounded-t-[1.5rem] bg-[#f7f7f2] p-4 pb-[calc(env(safe-area-inset-bottom)+1rem)] sm:p-6">
         <div className="mb-5 flex items-center justify-between">
           <h2 className="min-w-0 pr-3 text-lg font-bold sm:text-xl">{t.guestGuide}</h2>
           <button onClick={close} aria-label={t.close ?? "Close"} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white">

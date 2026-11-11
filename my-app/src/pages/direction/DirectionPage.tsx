@@ -72,7 +72,7 @@ export function DirectionPage({ language, setLanguage, t, navigate }: PageProps)
           <IconBox>
             <MapPin />
           </IconBox>
-          <div className="flex-1">
+          <div className="min-w-0 flex-1">
             <h3 className="font-semibold">{t.address}</h3>
             <p className="mt-2 text-sm leading-6 text-gray-600">{address}</p>
           </div>
