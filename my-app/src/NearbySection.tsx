@@ -119,7 +119,7 @@ export function NearbySection({ language }: { language: Language }) {
         >{t.tabs[key]}<span>{key === 'all' ? total : places[key].length}</span></button>)}
       </div>
       <div className="explore-filter-row">
-        <fieldset className="explore-cost-filter"><legend>{t.cost}</legend><div>
+        <fieldset className="explore-cost-filter" aria-label={t.cost}><div>
           {costFilters.map(value => <button key={value} type="button" aria-pressed={cost === value}
             className={cost === value ? 'active' : ''} onClick={() => { setCost(value); setLimit(12) }}>
             {cost === value && <Check size={13} aria-hidden="true" />}{t.filters[value]}
